@@ -1,0 +1,2 @@
+DROP DATABASE IF EXISTS cyber_hill;
+CREATE DATABASE cyber_hill;
