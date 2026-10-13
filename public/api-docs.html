@@ -1,0 +1,366 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="CyberHill API documentation and endpoint reference.">
+    <title>CyberHill API | Documentation</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/script.js" defer></script>
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <a href="/api-docs.html" class="brand">
+                <div class="brand-icon">C</div>
+                <div>
+                    <span class="brand-name">CyberHill</span>
+                    <span class="brand-subtitle">API REFERENCE</span>
+                </div>
+            </a>
+
+            <div class="sidebar-label">DOCUMENTATION</div>
+
+            <nav class="navigation">
+                <a href="#overview" class="nav-link active">
+                    <span class="nav-icon">⌂</span> Overview
+                </a>
+                <a href="#users" class="nav-link">
+                    <span class="nav-icon">♙</span> Users
+                </a>
+                <a href="#vulnerabilities" class="nav-link">
+                    <span class="nav-icon">◈</span> Vulnerabilities
+                </a>
+                <a href="#assets" class="nav-link">
+                    <span class="nav-icon">▦</span> Assets
+                </a>
+                <a href="#relationships" class="nav-link">
+                    <span class="nav-icon">⌘</span> Relationships
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <span class="status-dot"></span>
+                API documentation
+                <span class="version">v1</span>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="breadcrumb">
+                    Documentation <span>/</span> API Reference
+                </div>
+                <a class="topbar-link" href="/api" target="_blank" rel="noreferrer">
+                    View API index ↗
+                </a>
+            </header>
+
+            <section id="overview" class="hero">
+                <div class="eyebrow">
+                    <span class="status-dot"></span>
+                    DEVELOPER DOCUMENTATION
+                </div>
+
+                <h1>CyberHill API</h1>
+
+                <p class="hero-description">
+                    Explore the endpoints used to manage vulnerabilities,
+                    assets, users and relationships across CyberHill.
+                </p>
+
+                <div class="hero-meta">
+                    <span class="meta-chip">REST API</span>
+                    <span class="meta-chip">JSON</span>
+                    <span class="meta-chip">Version 1</span>
+                </div>
+            </section>
+
+            <section class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">DOCUMENTED ENDPOINTS</span>
+                    <strong id="endpoint-count">0</strong>
+                    <span class="stat-detail">Across all resources</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">HTTP METHODS</span>
+                    <strong>5</strong>
+                    <span class="stat-detail">GET, POST, PATCH, PUT, DELETE</span>
+                </div>
+
+                <div class="stat-card">
+                    <span class="stat-label">RESPONSE FORMAT</span>
+                    <strong>JSON</strong>
+                    <span class="stat-detail">Structured API responses</span>
+                </div>
+            </section>
+
+            <section class="endpoint-section">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-kicker">REFERENCE</span>
+                        <h2>API Endpoints</h2>
+                        <p class="section-description">
+                            Browse available routes or search by method, path or description.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="search-bar">
+                    <span class="search-icon">⌕</span>
+                    <input
+                        id="endpoint-search"
+                        type="search"
+                        placeholder="Search endpoints..."
+                        aria-label="Search API endpoints"
+                    >
+                    <kbd> / </kbd>
+                </div>
+
+                <div id="no-results" class="no-results" hidden>
+                    No endpoints match your search.
+                </div>
+
+                <section id="users" class="resource-group">
+                    <div class="resource-heading">
+                        <div class="resource-icon users-icon">♙</div>
+                        <div>
+                            <h3>Users</h3>
+                            <p>User accounts and identity records.</p>
+                        </div>
+                        <span class="resource-count">1 endpoint</span>
+                    </div>
+
+                    <article class="endpoint-card"
+                        data-method="GET"
+                        data-path="/api/users"
+                        data-description="Retrieve all users">
+                        <div class="endpoint-summary">
+                            <span class="method get">GET</span>
+                            <code>/api/users</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Retrieve all users.</p>
+                        <div class="endpoint-details">
+                            <div class="details-label">DESCRIPTION</div>
+                            Returns a JSON object containing the users array.
+                            <div class="details-label">EXAMPLE RESPONSE</div>
+                            <pre><code>{
+  "users": [
+    {
+      "user_id": 1,
+      "username": "user1"
+    }
+  ]
+}</code></pre>
+                            <a href="/api/users" target="_blank" rel="noreferrer"
+                                class="try-link">Open endpoint ↗</a>
+                        </div>
+                    </article>
+                </section>
+
+                <section id="vulnerabilities" class="resource-group">
+                    <div class="resource-heading">
+                        <div class="resource-icon vulnerabilities-icon">◈</div>
+                        <div>
+                            <h3>Vulnerabilities</h3>
+                            <p>Create, retrieve, update and delete vulnerabilities.</p>
+                        </div>
+                        <span class="resource-count">5 endpoints</span>
+                    </div>
+
+                    <article class="endpoint-card"
+                        data-method="GET"
+                        data-path="/api/vulnerabilities"
+                        data-description="List all vulnerabilities">
+                        <div class="endpoint-summary">
+                            <span class="method get">GET</span>
+                            <code>/api/vulnerabilities</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Retrieve all vulnerabilities.</p>
+                        <div class="endpoint-details">
+                            Returns a JSON object containing the vulnerabilities array.
+                            <a href="/api/vulnerabilities" target="_blank" rel="noreferrer"
+                                class="try-link">Open endpoint ↗</a>
+                        </div>
+                    </article>
+
+                    <article class="endpoint-card"
+                        data-method="POST"
+                        data-path="/api/vulnerabilities"
+                        data-description="Create a new vulnerability">
+                        <div class="endpoint-summary">
+                            <span class="method post">POST</span>
+                            <code>/api/vulnerabilities</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Create a new vulnerability record.</p>
+                        <div class="endpoint-details">
+                            <div class="details-label">EXAMPLE REQUEST BODY</div>
+                            <pre><code>{
+  "title": "Example vulnerability",
+  "description": "Example description",
+  "cve": "CVE-2026-0001",
+  "cvss": 7.5,
+  "contextual_severity": "High",
+  "source": "OpenVAS",
+  "date_discovered": "2026-10-13",
+  "status": "Open"
+}</code></pre>
+                        </div>
+                    </article>
+
+                    <article class="endpoint-card"
+                        data-method="GET"
+                        data-path="/api/vulnerabilities/:vulnerability_id"
+                        data-description="Retrieve one vulnerability by ID">
+                        <div class="endpoint-summary">
+                            <span class="method get">GET</span>
+                            <code>/api/vulnerabilities/:vulnerability_id</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Retrieve a single vulnerability by its ID.</p>
+                        <div class="endpoint-details">
+                            Replace <code>:vulnerability_id</code> with the record ID.
+                            <a href="/api/vulnerabilities/1" target="_blank" rel="noreferrer"
+                                class="try-link">Try ID 1 ↗</a>
+                        </div>
+                    </article>
+
+                    <article class="endpoint-card"
+                        data-method="PATCH"
+                        data-path="/api/vulnerabilities/:vulnerability_id"
+                        data-description="Update vulnerability details">
+                        <div class="endpoint-summary">
+                            <span class="method patch">PATCH</span>
+                            <code>/api/vulnerabilities/:vulnerability_id</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Update an existing vulnerability's details.</p>
+                        <div class="endpoint-details">
+                            <div class="details-label">EXAMPLE REQUEST BODY</div>
+                            <pre><code>{
+  "contextual_severity": "Critical"
+}</code></pre>
+                        </div>
+                    </article>
+
+                    <article class="endpoint-card"
+                        data-method="PATCH"
+                        data-path="/api/vulnerabilities/:vulnerability_id/status"
+                        data-description="Update vulnerability status">
+                        <div class="endpoint-summary">
+                            <span class="method patch">PATCH</span>
+                            <code>/api/vulnerabilities/:vulnerability_id/status</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Change the status of a vulnerability.</p>
+                        <div class="endpoint-details">
+                            <div class="details-label">EXAMPLE REQUEST BODY</div>
+                            <pre><code>{
+  "status": "Resolved"
+}</code></pre>
+                        </div>
+                    </article>
+
+                    <article class="endpoint-card"
+                        data-method="DELETE"
+                        data-path="/api/vulnerabilities/:vulnerability_id"
+                        data-description="Delete a vulnerability">
+                        <div class="endpoint-summary">
+                            <span class="method delete">DELETE</span>
+                            <code>/api/vulnerabilities/:vulnerability_id</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Delete a vulnerability by its ID.</p>
+                        <div class="endpoint-details">
+                            This endpoint modifies data. Use an API client to send a DELETE request.
+                        </div>
+                    </article>
+                </section>
+
+                <section id="assets" class="resource-group">
+                    <div class="resource-heading">
+                        <div class="resource-icon assets-icon">▦</div>
+                        <div>
+                            <h3>Vulnerability Assets</h3>
+                            <p>Manage assets affected by a vulnerability.</p>
+                        </div>
+                        <span class="resource-count">2 endpoints</span>
+                    </div>
+
+                    <article class="endpoint-card"
+                        data-method="GET"
+                        data-path="/api/vulnerabilities/:vulnerability_id/assets"
+                        data-description="List assets associated with a vulnerability">
+                        <div class="endpoint-summary">
+                            <span class="method get">GET</span>
+                            <code>/api/vulnerabilities/:vulnerability_id/assets</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Retrieve the assets associated with a vulnerability.</p>
+                        <div class="endpoint-details">
+                            <a href="/api/vulnerabilities/2/assets" target="_blank"
+                                rel="noreferrer" class="try-link">Try vulnerability ID 2 ↗</a>
+                        </div>
+                    </article>
+
+                    <article class="endpoint-card"
+                        data-method="POST"
+                        data-path="/api/vulnerabilities/:vulnerability_id/assets"
+                        data-description="Associate assets with a vulnerability">
+                        <div class="endpoint-summary">
+                            <span class="method post">POST</span>
+                            <code>/api/vulnerabilities/:vulnerability_id/assets</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Associate one or more assets with a vulnerability.</p>
+                        <div class="endpoint-details">
+                            <div class="details-label">EXAMPLE REQUEST BODY</div>
+                            <pre><code>{
+  "asset_ids": [2, 4]
+}</code></pre>
+                        </div>
+                    </article>
+                </section>
+
+                <section id="relationships" class="resource-group">
+                    <div class="resource-heading">
+                        <div class="resource-icon relationships-icon">⌘</div>
+                        <div>
+                            <h3>Relationships</h3>
+                            <p>Explore links between vulnerabilities and other records.</p>
+                        </div>
+                        <span class="resource-count">1 endpoint</span>
+                    </div>
+
+                    <article class="endpoint-card"
+                        data-method="GET"
+                        data-path="/api/vulnerabilities/:vulnerability_id/relationships"
+                        data-description="Retrieve incoming and outgoing relationships">
+                        <div class="endpoint-summary">
+                            <span class="method get">GET</span>
+                            <code>/api/vulnerabilities/:vulnerability_id/relationships</code>
+                            <span class="expand-icon">↗</span>
+                        </div>
+                        <p>Retrieve relationships where the vulnerability is the source or target.</p>
+                        <div class="endpoint-details">
+                            <a href="/api/vulnerabilities/1/relationships" target="_blank"
+                                rel="noreferrer" class="try-link">Try vulnerability ID 1 ↗</a>
+                        </div>
+                    </article>
+                </section>
+
+                <footer class="page-footer">
+                    <span class="footer-mark">C</span>
+                    <span>CyberHill API Reference</span>
+                    <span class="footer-right">Built for developers.</span>
+                </footer>
+            </section>
+        </main>
+    </div>
+</body>
+</html>
