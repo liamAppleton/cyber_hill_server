@@ -1,4 +1,4 @@
-const endpoints = require('../../endpoints.json');
+const endpoints = require('../../public/endpoints.json');
 
 const getEndpoints = (req, res,) => {
     console.log(endpoints)

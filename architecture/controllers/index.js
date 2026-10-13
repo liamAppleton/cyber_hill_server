@@ -11,6 +11,13 @@ const {
     postAssetsByVulnerabilityId,
     getRelationshipsByVulnerabilityId
 } = require('./vulnerabilities.controllers');
+const {
+    getVulnerabilityAssetById,
+    patchVulnerabilityAssetById,
+    deleteVulnerabilityAsset,
+    getVulnerabilityAssetNotesById,
+    postVulnerabilityAssetNote
+} = require('./vulnerabilityAssets.controllers')
 
 module.exports = {
     getEndpoints,
@@ -23,5 +30,10 @@ module.exports = {
     deleteVulnerability,
     getAssetsByVulnerabilityId,
     postAssetsByVulnerabilityId,
-    getRelationshipsByVulnerabilityId
+    getRelationshipsByVulnerabilityId,
+    getVulnerabilityAssetById,
+    patchVulnerabilityAssetById,
+    deleteVulnerabilityAsset,
+    getVulnerabilityAssetNotesById,
+    postVulnerabilityAssetNote
 };
