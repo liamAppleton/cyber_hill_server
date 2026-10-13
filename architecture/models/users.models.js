@@ -1,8 +1,8 @@
-const db = require('../database/db');
+const db = require('../../database/db');
 
 const fetchUsers = () => {
     return db.query('SELECT * FROM users')
-        .then(([users]) => users)
+        .then(([rows]) => rows)
 }
 
 module.exports = {

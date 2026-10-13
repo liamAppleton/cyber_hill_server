@@ -1,14 +1,9 @@
 const express = require('express');
 const app = express();
-const {
-    getEndpoints,
-    getUsers
-} = require('./controllers')
+const apiRouter = require('./architecture/routes/api-router');
 
 app.use(express.json());
 
-app.get('/api', getEndpoints)
-
-app.get('/api/users', getUsers)
+app.use('/api', apiRouter)
 
 module.exports = app;
