@@ -1,32 +1,187 @@
 {
-    "GET /api": {
-        "description": "Serves up a json representation of all the available endpoints of the api."
-    },
-    "GET /api/users": {
-        "description": "Serves an array of all users",
-        "exampleResponse": {
-            "users": [
-                {
-                    "user_id":1,
-                    "username":"user1",
-                    "password_hash":"hash1",
-                    "created_at":
-                    "2026-10-11T19:33:04.000Z"
-                },
-                {
-                    "user_id":2,
-                    "username":"user2",
-                    "password_hash":"hash2",
-                    "created_at":"2026-10-11T19:33:04.000Z"
-                },
-                {
-                    "user_id":3,
-                    "username":"user3",
-                    "password_hash":
-                    "hash3",
-                    "created_at":"2026-10-11T19:33:04.000Z"
-                }
-            ]
+  "GET /api": {
+    "description": "Serves a JSON representation of all available API endpoints."
+  },
+  "GET /api/users": {
+    "description": "Serves an array of all users.",
+    "exampleResponse": {
+      "users": [
+        {
+          "user_id": 1,
+          "username": "user1",
+          "password_hash": "hash1",
+          "created_at": "2026-10-11T19:33:04.000Z"
+        },
+        {
+          "user_id": 2,
+          "username": "user2",
+          "password_hash": "hash2",
+          "created_at": "2026-10-11T19:33:04.000Z"
+        },
+        {
+          "user_id": 3,
+          "username": "user3",
+          "password_hash": "hash3",
+          "created_at": "2026-10-11T19:33:04.000Z"
         }
+      ]
     }
+  },
+  "GET /api/vulnerabilities": {
+    "description": "Serves an array of all vulnerabilities.",
+    "exampleResponse": {
+      "vulnerabilities": [
+        {
+          "vulnerability_id": 1,
+          "title": "Example vulnerability",
+          "description": "An example vulnerability description.",
+          "cve": "CVE-2026-0001",
+          "cvss": 7.5,
+          "contextual_severity": "High",
+          "status": "Open"
+        }
+      ]
+    }
+  },
+  "POST /api/vulnerabilities": {
+    "description": "Creates a new vulnerability.",
+    "exampleRequest": {
+      "title": "Example vulnerability",
+      "description": "An example vulnerability description.",
+      "cve": "CVE-2026-0001",
+      "cvss": 7.5,
+      "contextual_severity": "High",
+      "source": "OpenVAS",
+      "date_discovered": "2026-10-13",
+      "status": "Open"
+    }
+  },
+  "GET /api/vulnerabilities/:vulnerability_id": {
+    "description": "Serves a single vulnerability identified by its ID.",
+    "exampleResponse": {
+      "vulnerability": {
+        "vulnerability_id": 1,
+        "title": "Example vulnerability",
+        "description": "An example vulnerability description.",
+        "cve": "CVE-2026-0001",
+        "cvss": 7.5,
+        "contextual_severity": "High",
+        "status": "Open"
+      }
+    }
+  },
+  "PATCH /api/vulnerabilities/:vulnerability_id": {
+    "description": "Updates an existing vulnerability by its ID, such as changing its contextual severity.",
+    "exampleRequest": {
+      "contextual_severity": "Critical"
+    }
+  },
+  "PATCH /api/vulnerabilities/:vulnerability_id/status": {
+    "description": "Updates the status of an existing vulnerability by its ID.",
+    "exampleRequest": {
+      "status": "Resolved"
+    },
+    "exampleResponse": {
+      "vulnerability": {
+        "vulnerability_id": 1,
+        "title": "Example vulnerability",
+        "description": "An example vulnerability description.",
+        "cve": "CVE-2026-0001",
+        "cvss": 7.5,
+        "contextual_severity": "High",
+        "status": "Resolved"
+      }
+    }
+  },
+  "DELETE /api/vulnerabilities/:vulnerability_id": {
+    "description": "Deletes a vulnerability identified by its ID."
+  },
+  "GET /api/vulnerabilities/:vulnerability_id/assets": {
+    "description": "Serves an array of assets associated with a vulnerability.",
+    "exampleResponse": {
+      "assets": [
+        {
+          "vulnerability_asset_id": 3,
+          "vulnerability_id": 2,
+          "asset_id": 1,
+          "status": "Resolved",
+          "contextual_severity": "Medium",
+          "date_first_detected": "2026-09-20T09:00:00.000Z",
+          "date_last_detected": "2026-10-03T15:45:00.000Z",
+          "resolved_at": "2026-10-04T11:00:00.000Z"
+        },
+        {
+          "vulnerability_asset_id": 4,
+          "vulnerability_id": 2,
+          "asset_id": 3,
+          "status": "Open",
+          "contextual_severity": "High",
+          "date_first_detected": "2026-09-22T07:30:00.000Z",
+          "date_last_detected": "2026-10-10T07:30:00.000Z",
+          "resolved_at": null
+        }
+      ]
+    }
+  },
+  "POST /api/vulnerabilities/:vulnerability_id/assets": {
+    "description": "Associates one or more assets with a vulnerability.",
+    "exampleRequest": {
+      "asset_ids": [2, 4]
+    },
+    "exampleResponse": {
+      "assets": [
+        {
+          "vulnerability_asset_id": 5,
+          "vulnerability_id": 2,
+          "asset_id": 2,
+          "status": "Open",
+          "contextual_severity": "Unknown"
+        },
+        {
+          "vulnerability_asset_id": 6,
+          "vulnerability_id": 2,
+          "asset_id": 4,
+          "status": "Open",
+          "contextual_severity": "Unknown"
+        }
+      ]
+    }
+  },
+  "GET /api/vulnerabilities/:vulnerability_id/relationships": {
+    "description": "Serves all relationships where the specified vulnerability is either the source or target record.",
+    "exampleResponse": {
+      "relationships": [
+        {
+          "record_relationship_id": 1,
+          "source_record_type": "vulnerability",
+          "source_record_id": 1,
+          "target_record_type": "asset",
+          "target_record_id": 1,
+          "relationship_type": "affects",
+          "created_at": "2026-10-13T09:36:48.000Z",
+          "created_by": 1
+        },
+        {
+          "record_relationship_id": 2,
+          "source_record_type": "vulnerability",
+          "source_record_id": 1,
+          "target_record_type": "project",
+          "target_record_id": 1,
+          "relationship_type": "tracked_in",
+          "created_at": "2026-10-13T09:36:48.000Z",
+          "created_by": 1
+        },
+        {
+          "record_relationship_id": 8,
+          "source_record_type": "threat_article",
+          "source_record_id": 1,
+          "target_record_type": "vulnerability",
+          "target_record_id": 1,
+          "relationship_type": "identifies",
+          "created_at": "2026-10-13T09:36:48.000Z",
+          "created_by": 1
+        }
+      ]
+    }
+  }
 }

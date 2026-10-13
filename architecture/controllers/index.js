@@ -3,7 +3,13 @@ const { getUsers } = require('./users.controllers');
 const {
     getVulnerabilities,
     getVulnerabilityById,
-    postVulnerability
+    postVulnerability,
+    patchVulnerabilityById,
+    patchVulnerabilityStatusById,
+    deleteVulnerability,
+    getAssetsByVulnerabilityId,
+    postAssetsByVulnerabilityId,
+    getRelationshipsByVulnerabilityId
 } = require('./vulnerabilities.controllers');
 
 module.exports = {
@@ -11,5 +17,11 @@ module.exports = {
     getUsers,
     getVulnerabilities,
     getVulnerabilityById,
-    postVulnerability
+    postVulnerability,
+    patchVulnerabilityById,
+    patchVulnerabilityStatusById,
+    deleteVulnerability,
+    getAssetsByVulnerabilityId,
+    postAssetsByVulnerabilityId,
+    getRelationshipsByVulnerabilityId
 };

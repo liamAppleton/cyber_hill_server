@@ -1,7 +1,13 @@
 const {
     fetchVulnerabilities,
     fetchVulnerabilityById,
-    addVulnerability
+    addVulnerability,
+    updateVulnerabilityById,
+    updateVulnerabilityStatusById,
+    removeVulnerability,
+    fetchAssetsByVulnerabilityId,
+    addAssetsByVulnerabilityId,
+    fetchRelationshipsByVulnerabilityId
 } = require('../models');
 
 const getVulnerabilities = (req, res, next) => {
@@ -48,8 +54,93 @@ const postVulnerability = (req, res, next) => {
         })
 }
 
+const patchVulnerabilityById = (req, res, next) => {
+    const { contextual_severity } = req.body;
+    const { vulnerability_id } = req.params;
+
+    updateVulnerabilityById({ contextual_severity, vulnerability_id })
+        .then((vulnerability) => {
+            res.status(200).send({ vulnerability })
+        })
+        .catch((err) => {
+            next(err);
+        })
+}
+
+const patchVulnerabilityStatusById = (req, res, next) => {
+    const { status } = req.body;
+    const { vulnerability_id } = req.params;
+
+    updateVulnerabilityStatusById({ status, vulnerability_id })
+        .then((vulnerability) => {
+            res.status(200).send({ vulnerability });
+        })
+        .catch((err) => {
+            next(err);
+        });
+};
+
+const deleteVulnerability = (req, res, next) => {
+    const { vulnerability_id } = req.params;
+
+    removeVulnerability(vulnerability_id)
+        .then(() => {
+            res.status(204).send();
+        })
+        .catch((err) => {
+            next(err);
+        })
+};
+
+const getAssetsByVulnerabilityId = (req, res, next) => {
+    const { vulnerability_id } = req.params;
+    
+    fetchAssetsByVulnerabilityId(vulnerability_id)
+        .then((assets) => {
+            res.status(200).send({ assets });
+        })
+        .catch((err) => {
+            next(err)
+        })
+}
+
+const postAssetsByVulnerabilityId = (req, res, next) => {
+    const { vulnerability_id } = req.params;
+    const { asset_ids } = req.body;
+
+    addAssetsByVulnerabilityId(vulnerability_id, asset_ids)
+        .then(() => {
+            return fetchAssetsByVulnerabilityId(vulnerability_id);
+        })
+        .then((assets) => {
+            res.status(201).send({ assets });
+        })
+        .catch((err) => {
+            next(err);
+        });
+};
+
+const getRelationshipsByVulnerabilityId = (req, res, next) => {
+    const { vulnerability_id } = req.params;
+
+    fetchRelationshipsByVulnerabilityId(vulnerability_id)
+        .then((relationships) => {
+            res.status(200).send({ relationships });
+        })
+        .catch((err) => {
+            next(err);
+        });
+};
+
+
 module.exports = {
     getVulnerabilities,
     getVulnerabilityById,
-    postVulnerability
+    postVulnerability,
+    patchVulnerabilityById,
+    patchVulnerabilityStatusById,
+    deleteVulnerability,
+    getAssetsByVulnerabilityId,
+    postAssetsByVulnerabilityId,
+    getRelationshipsByVulnerabilityId
 };

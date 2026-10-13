@@ -74,8 +74,9 @@ const createVulnerabilityAssets = (vulnerabilityAssetsData) => {
                 'Low',
                 'Medium',
                 'High',
-                'Critical'
-            ),
+                'Critical',
+                'Unknown'
+            ) NOT NULL DEFAULT 'Unknown',
 
             date_first_detected DATETIME NOT NULL,
             date_last_detected DATETIME NOT NULL,

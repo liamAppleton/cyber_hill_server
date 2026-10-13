@@ -2,12 +2,24 @@ const { fetchUsers } = require('./users.models');
 const {
     fetchVulnerabilities,
     fetchVulnerabilityById,
-    addVulnerability
+    addVulnerability,
+    updateVulnerabilityById,
+    updateVulnerabilityStatusById,
+    removeVulnerability,
+    fetchAssetsByVulnerabilityId,
+    addAssetsByVulnerabilityId,
+    fetchRelationshipsByVulnerabilityId
 } = require('.//vulnerabilities.models');
 
 module.exports = {
     fetchUsers,
     fetchVulnerabilities,
     fetchVulnerabilityById,
-    addVulnerability
+    addVulnerability,
+    updateVulnerabilityById,
+    updateVulnerabilityStatusById,
+    removeVulnerability,
+    fetchAssetsByVulnerabilityId,
+    addAssetsByVulnerabilityId,
+    fetchRelationshipsByVulnerabilityId
 };
