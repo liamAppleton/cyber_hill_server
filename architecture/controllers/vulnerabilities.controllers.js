@@ -74,7 +74,7 @@ const patchVulnerabilityStatusById = (req, res, next) => {
     updateVulnerabilityStatusById({ status, vulnerability_id })
         .then((vulnerability) => {
             res.status(200).send({ vulnerability });
-        })
+   f     })
         .catch((err) => {
             next(err);
         });

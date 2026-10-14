@@ -17,6 +17,14 @@ const {
     fetchVulnerabilityAssetNotesById,
     addVulnerabilityAssetNote
 } = require('./vulnerabilityAssets.models')
+const {
+    fetchAssets,
+    fetchAssetById,
+    addAsset,
+    updateAsset,
+    fetchVulnerabilitiesByAssetId,
+    removeAsset
+} = require('./assets.models');
 
 module.exports = {
     fetchUsers,
@@ -33,5 +41,11 @@ module.exports = {
     updateVulnerabilityAssetById,
     removeVulnerabilityAsset,
     fetchVulnerabilityAssetNotesById,
-    addVulnerabilityAssetNote
+    addVulnerabilityAssetNote,
+    fetchAssets,
+    fetchAssetById,
+    addAsset,
+    updateAsset,
+    fetchVulnerabilitiesByAssetId,
+    removeAsset
 };
