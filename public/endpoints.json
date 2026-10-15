@@ -137,7 +137,10 @@
   "POST /api/vulnerabilities/:vulnerability_id/assets": {
     "description": "Associates one or more assets with a vulnerability.",
     "exampleRequest": {
-      "asset_ids": [2, 4]
+      "asset_ids": [
+        2,
+        4
+      ]
     },
     "exampleResponse": {
       "assets": [
@@ -344,5 +347,117 @@
   },
   "DELETE /api/assets/:asset_id": {
     "description": "Deletes an asset identified by its ID."
+  },
+  "GET /api/vendors": {
+    "description": "Serves an array of all vendors.",
+    "exampleResponse": {
+      "vendors": [
+        {
+          "vendor_id": 1,
+          "name": "Example IT Supplier",
+          "function": "Managed IT services",
+          "criticality": "High",
+          "holds_pii": true,
+          "system_access": true,
+          "it_supplier": true
+        }
+      ]
+    }
+  },
+  "GET /api/vendors/:vendor_id": {
+    "description": "Serves a single vendor identified by its ID.",
+    "exampleResponse": {
+      "vendor": {
+        "vendor_id": 1,
+        "name": "Example IT Supplier",
+        "function": "Managed IT services",
+        "criticality": "High",
+        "holds_pii": true,
+        "system_access": true,
+        "it_supplier": true
+      }
+    }
+  },
+  "POST /api/vendors": {
+    "description": "Creates a new vendor.",
+    "exampleRequest": {
+      "name": "Example IT Supplier",
+      "function": "Managed IT services",
+      "criticality": "High",
+      "holds_pii": true,
+      "system_access": true,
+      "it_supplier": true
+    },
+    "exampleResponse": {
+      "vendor": {
+        "vendor_id": 1,
+        "name": "Example IT Supplier",
+        "function": "Managed IT services",
+        "criticality": "High",
+        "holds_pii": true,
+        "system_access": true,
+        "it_supplier": true
+      }
+    }
+  },
+  "PATCH /api/vendors/:vendor_id": {
+    "description": "Updates one or more fields of an existing vendor. Only supplied fields are changed.",
+    "exampleRequest": {
+      "criticality": "Critical"
+    },
+    "exampleResponse": {
+      "vendor": {
+        "vendor_id": 1,
+        "name": "Example IT Supplier",
+        "function": "Managed IT services",
+        "criticality": "Critical",
+        "holds_pii": true,
+        "system_access": true,
+        "it_supplier": true
+      }
+    }
+  },
+  "DELETE /api/vendors/:vendor_id": {
+    "description": "Deletes a vendor identified by its ID."
+  },
+  "GET /api/vendors/:vendor_id/risks": {
+    "description": "Serves the risks associated with a specific vendor.",
+    "exampleResponse": {
+      "risks": [
+        {
+          "vendor_risk_id": 1,
+          "vendor_id": 1,
+          "title": "Supplier service disruption",
+          "description": "Potential disruption to a critical supplier service."
+        }
+      ]
+    }
+  },
+  "GET /api/vendors/:vendor_id/notes": {
+    "description": "Serves the notes associated with a specific vendor.",
+    "exampleResponse": {
+      "notes": [
+        {
+          "vendor_note_id": 1,
+          "vendor_id": 1,
+          "note": "Annual supplier security review completed.",
+          "created_at": "2026-10-15T10:00:00.000Z"
+        }
+      ]
+    }
+  },
+  "POST /api/vendors/:vendor_id/notes": {
+    "description": "Creates a note for a specific vendor.",
+    "exampleRequest": {
+      "note": "Annual supplier security review completed."
+    },
+    "exampleResponse": {
+      "note": {
+        "vendor_note_id": 1,
+        "vendor_id": 1,
+        "note": "Annual supplier security review completed.",
+        "created_at": "2026-10-15T10:00:00.000Z"
+      }
+    }
   }
 }

@@ -25,6 +25,16 @@ const {
     fetchVulnerabilitiesByAssetId,
     removeAsset
 } = require('./assets.models');
+const {
+    fetchVendors,
+    fetchVendorById,
+    addVendor,
+    updateVendor,
+    removeVendor,
+    fetchVendorRisksById,
+    fetchVendorNotesById,
+    addVendorNote
+} = require('./vendors.models');
 
 module.exports = {
     fetchUsers,
@@ -47,5 +57,13 @@ module.exports = {
     addAsset,
     updateAsset,
     fetchVulnerabilitiesByAssetId,
-    removeAsset
+    removeAsset,
+    fetchVendors,
+    fetchVendorById,
+    addVendor,
+    updateVendor,
+    removeVendor,
+    fetchVendorRisksById,
+    fetchVendorNotesById,
+    addVendorNote
 };

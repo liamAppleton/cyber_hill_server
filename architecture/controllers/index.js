@@ -26,6 +26,16 @@ const {
     getVulnerabilitiesByAssetId,
     deleteAsset
 } = require('./assets.controllers');
+const {
+    getVendors,
+    getVendorById,
+    postVendor,
+    patchVendor,
+    deleteVendor,
+    getVendorRisksById,
+    getVendorNotesById,
+    postVendorNote
+} = require('./vendors.controllers')
 
 module.exports = {
     getEndpoints,
@@ -49,5 +59,13 @@ module.exports = {
     postAsset,
     patchAsset,
     getVulnerabilitiesByAssetId,
-    deleteAsset
+    deleteAsset,
+    getVendors,
+    getVendorById,
+    postVendor,
+    patchVendor,
+    deleteVendor,
+    getVendorRisksById,
+    getVendorNotesById,
+    postVendorNote
 };
