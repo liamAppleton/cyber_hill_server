@@ -8,6 +8,7 @@ const vendorsRouter = require('./vendors.router')
 const vulnerabilityImportsRouter = require('./vulnerabilityImports.router')
 const vulnerabilityImportFindingsRouter = require('./vulnerabilityImportFindings.router')
 const vendorRisksRouter = require('./vendorRisks.router')
+const projectsRouter = require('./projects.router');
 
 apiRouter.use('/', endpointsRouter);
 
@@ -26,5 +27,7 @@ apiRouter.use('/assets', assetsRouter);
 apiRouter.use('/vendors', vendorsRouter);
 
 apiRouter.use('/vendor-risks', vendorRisksRouter);
+
+apiRouter.use('/projects', projectsRouter);
 
 module.exports = apiRouter;

@@ -54,6 +54,17 @@ const {
     postVendorRiskNote,
     getRelationshipsByVendorRiskId
 } = require('./vendorRisks.controllers');
+const {
+    getProjects,
+    getProjectById,
+    postProject,
+    patchProject,
+    patchProjectStatus,
+    deleteProject,
+    getProjectNotesById,
+    postProjectNote,
+    getRelationshipsByProjectId
+} = require('./projects.controllers')
 
 module.exports = {
     getEndpoints,
@@ -99,5 +110,14 @@ module.exports = {
     deleteVendorRisk,
     getVendorRiskNotesById,
     postVendorRiskNote,
-    getRelationshipsByVendorRiskId
+    getRelationshipsByVendorRiskId,
+    getProjects,
+    getProjectById,
+    postProject,
+    patchProject,
+    patchProjectStatus,
+    deleteProject,
+    getProjectNotesById,
+    postProjectNote,
+    getRelationshipsByProjectId
 };

@@ -53,6 +53,17 @@ const {
     addVendorRiskNote,
     fetchRelationshipsByVendorRiskId
 } = require('./vendorRisks.models')
+const {
+    fetchProjects,
+    fetchProjectById,
+    addProject,
+    updateProject,
+    updateProjectStatus,
+    removeProject,
+    fetchProjectNotesById,
+    addProjectNote,
+    fetchRelationshipsByProjectId
+} = require('./projects.models');
 
 module.exports = {
     fetchUsers,
@@ -97,5 +108,14 @@ module.exports = {
     removeVendorRisk,
     fetchVendorRiskNotesById,
     addVendorRiskNote,
-    fetchRelationshipsByVendorRiskId
+    fetchRelationshipsByVendorRiskId,
+    fetchProjects,
+    fetchProjectById,
+    addProject,
+    updateProject,
+    updateProjectStatus,
+    removeProject,
+    fetchProjectNotesById,
+    addProjectNote,
+    fetchRelationshipsByProjectId
 };
