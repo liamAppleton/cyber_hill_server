@@ -138,10 +138,7 @@
   "POST /api/vulnerabilities/:vulnerability_id/assets": {
     "description": "Associates one or more assets with a vulnerability.",
     "exampleRequest": {
-      "asset_ids": [
-        2,
-        4
-      ]
+      "asset_ids": [2, 4]
     },
     "exampleResponse": {
       "assets": [
@@ -429,7 +426,9 @@
           "vendor_risk_id": 1,
           "vendor_id": 1,
           "title": "Supplier service disruption",
-          "description": "Potential disruption to a critical supplier service."
+          "description": "Potential disruption to a critical supplier service.",
+          "date_identified": "2026-10-15",
+          "status": "Open"
         }
       ]
     }
@@ -542,6 +541,137 @@
         "severity": "Critical",
         "cve": "CVE-2024-TEST01"
       }
+    }
+  },
+  "GET /api/vendor-risks": {
+    "description": "Serves an array of all vendor risks.",
+    "exampleResponse": {
+      "vendor_risks": [
+        {
+          "vendor_risk_id": 1,
+          "vendor_id": 1,
+          "title": "Supplier service disruption",
+          "description": "Potential disruption to a critical supplier service.",
+          "date_identified": "2026-10-15",
+          "status": "Open"
+        }
+      ]
+    }
+  },
+  "GET /api/vendor-risks/:vendor_risk_id": {
+    "description": "Serves a single vendor risk identified by its ID.",
+    "exampleResponse": {
+      "vendor_risk": {
+        "vendor_risk_id": 1,
+        "vendor_id": 1,
+        "title": "Supplier service disruption",
+        "description": "Potential disruption to a critical supplier service.",
+        "date_identified": "2026-10-15",
+        "status": "Open"
+      }
+    }
+  },
+  "POST /api/vendor-risks": {
+    "description": "Creates a new vendor risk.",
+    "exampleRequest": {
+      "vendor_id": 1,
+      "title": "Supplier service disruption",
+      "description": "Potential disruption to a critical supplier service.",
+      "date_identified": "2026-10-15",
+      "status": "Open"
+    },
+    "exampleResponse": {
+      "vendor_risk": {
+        "vendor_risk_id": 1,
+        "vendor_id": 1,
+        "title": "Supplier service disruption",
+        "description": "Potential disruption to a critical supplier service.",
+        "date_identified": "2026-10-15",
+        "status": "Open"
+      }
+    }
+  },
+  "PATCH /api/vendor-risks/:vendor_risk_id": {
+    "description": "Updates the editable fields of an existing vendor risk.",
+    "exampleRequest": {
+      "title": "Updated supplier service disruption risk",
+      "description": "Updated description of the supplier risk.",
+      "date_identified": "2026-10-16"
+    },
+    "exampleResponse": {
+      "vendor_risk": {
+        "vendor_risk_id": 1,
+        "title": "Updated supplier service disruption risk",
+        "description": "Updated description of the supplier risk.",
+        "date_identified": "2026-10-16",
+        "status": "Open"
+      }
+    }
+  },
+  "PATCH /api/vendor-risks/:vendor_risk_id/status": {
+    "description": "Updates the status of an existing vendor risk.",
+    "exampleRequest": {
+      "status": "In Progress"
+    },
+    "exampleResponse": {
+      "vendor_risk": {
+        "vendor_risk_id": 1,
+        "vendor_id": 1,
+        "title": "Supplier service disruption",
+        "description": "Potential disruption to a critical supplier service.",
+        "date_identified": "2026-10-15",
+        "status": "In Progress"
+      }
+    }
+  },
+  "DELETE /api/vendor-risks/:vendor_risk_id": {
+    "description": "Deletes a vendor risk identified by its ID."
+  },
+  "GET /api/vendor-risks/:vendor_risk_id/notes": {
+    "description": "Serves the notes associated with a specific vendor risk.",
+    "exampleResponse": {
+      "notes": [
+        {
+          "vendor_risk_note_id": 1,
+          "vendor_risk_id": 1,
+          "body": "Discussed mitigation options with the supplier.",
+          "user_id": 1,
+          "created_at": "2026-10-15T10:00:00.000Z"
+        }
+      ]
+    }
+  },
+  "POST /api/vendor-risks/:vendor_risk_id/notes": {
+    "description": "Creates a note for a specific vendor risk.",
+    "exampleRequest": {
+      "body": "Discussed mitigation options with the supplier.",
+      "user_id": 1
+    },
+    "exampleResponse": {
+      "note": {
+        "vendor_risk_note_id": 1,
+        "vendor_risk_id": 1,
+        "body": "Discussed mitigation options with the supplier.",
+        "user_id": 1,
+        "created_at": "2026-10-15T10:00:00.000Z"
+      }
+    }
+  },
+  "GET /api/vendor-risks/:vendor_risk_id/relationships": {
+    "description": "Serves all relationships where the specified vendor risk is either the source or target record.",
+    "exampleResponse": {
+      "relationships": [
+        {
+          "record_relationship_id": 3,
+          "source_record_type": "vendor_risk",
+          "source_record_id": 1,
+          "target_record_type": "vendor",
+          "target_record_id": 1,
+          "relationship_type": "relates_to",
+          "created_at": "2026-10-15T10:00:00.000Z",
+          "created_by": 1
+        }
+      ]
     }
   }
 }

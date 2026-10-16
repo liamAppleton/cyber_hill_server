@@ -42,6 +42,17 @@ const {
     fetchVulnerabilityImportFindingById,
     importVulnerabilityFindings
 } = require('./vulnerabilityImports.models');
+const {
+    fetchVendorRisks,
+    fetchVendorRiskById,
+    addVendorRisk,
+    updateVendorRisk,
+    updateVendorRiskStatus,
+    removeVendorRisk,
+    fetchVendorRiskNotesById,
+    addVendorRiskNote,
+    fetchRelationshipsByVendorRiskId
+} = require('./vendorRisks.models')
 
 module.exports = {
     fetchUsers,
@@ -77,5 +88,14 @@ module.exports = {
     fetchVulnerabilityImportById,
     fetchVulnerabilityImportFindings,
     fetchVulnerabilityImportFindingById,
-    importVulnerabilityFindings
+    importVulnerabilityFindings,
+    fetchVendorRisks,
+    fetchVendorRiskById,
+    addVendorRisk,
+    updateVendorRisk,
+    updateVendorRiskStatus,
+    removeVendorRisk,
+    fetchVendorRiskNotesById,
+    addVendorRiskNote,
+    fetchRelationshipsByVendorRiskId
 };

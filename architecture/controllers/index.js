@@ -43,6 +43,17 @@ const {
     getVulnerabilityImportFindingById,
     postVulnerabilityImport
 } = require('./vulnerabilityImports.controllers')
+const {
+    getVendorRisks,
+    getVendorRiskById,
+    postVendorRisk,
+    patchVendorRisk,
+    patchVendorRiskStatus,
+    deleteVendorRisk,
+    getVendorRiskNotesById,
+    postVendorRiskNote,
+    getRelationshipsByVendorRiskId
+} = require('./vendorRisks.controllers');
 
 module.exports = {
     getEndpoints,
@@ -79,5 +90,14 @@ module.exports = {
     getVulnerabilityImportById,
     getVulnerabilityImportFindings,
     getVulnerabilityImportFindingById,
-    postVulnerabilityImport
+    postVulnerabilityImport,
+    getVendorRisks,
+    getVendorRiskById,
+    postVendorRisk,
+    patchVendorRisk,
+    patchVendorRiskStatus,
+    deleteVendorRisk,
+    getVendorRiskNotesById,
+    postVendorRiskNote,
+    getRelationshipsByVendorRiskId
 };
