@@ -1,3 +1,4 @@
+
 {
   "GET /api": {
     "description": "Serves a JSON representation of all available API endpoints."
@@ -457,6 +458,89 @@
         "vendor_id": 1,
         "note": "Annual supplier security review completed.",
         "created_at": "2026-10-15T10:00:00.000Z"
+      }
+    }
+  },
+  "GET /api/vulnerability-imports": {
+    "description": "Serves an array of all vulnerability import records.",
+    "exampleResponse": {
+      "vulnerability_imports": [
+        {
+          "vulnerability_import_id": 1,
+          "filename": "openvas_test.csv",
+          "status": "Completed"
+        }
+      ]
+    }
+  },
+  "POST /api/vulnerability-imports": {
+    "description": "Uploads an OpenVAS CSV file and imports its vulnerability findings. Send the CSV as multipart/form-data using the file field.",
+    "contentType": "multipart/form-data",
+    "exampleRequest": {
+      "file": "openvas_test.csv"
+    },
+    "exampleResponse": {
+      "message": "Vulnerability import completed.",
+      "vulnerability_import_id": 1,
+      "filename": "openvas_test.csv",
+      "total_rows": 6,
+      "imported_count": 5,
+      "skipped_count": 1,
+      "invalid_count": 0
+    }
+  },
+  "GET /api/vulnerability-imports/:vulnerability_import_id": {
+    "description": "Serves a single vulnerability import record identified by its ID.",
+    "exampleResponse": {
+      "vulnerability_import": {
+        "vulnerability_import_id": 1,
+        "filename": "openvas_test.csv",
+        "status": "Completed"
+      }
+    }
+  },
+  "GET /api/vulnerability-imports/:vulnerability_import_id/findings": {
+    "description": "Serves an array of findings recorded for a specific vulnerability import.",
+    "exampleResponse": {
+      "vulnerability_import_findings": [
+        {
+          "vulnerability_import_finding_id": 1,
+          "vulnerability_import_id": 1,
+          "asset_id": 1,
+          "nvt_oid": "1.3.6.1.4.1.25623.1.0.100001",
+          "nvt_name": "TLS Certificate Expired",
+          "port": 443,
+          "port_protocol": "tcp",
+          "severity": "Critical",
+          "cve": "CVE-2024-TEST01"
+        },
+        {
+          "vulnerability_import_finding_id": 2,
+          "vulnerability_import_id": 1,
+          "asset_id": 2,
+          "nvt_oid": "1.3.6.1.4.1.25623.1.0.100002",
+          "nvt_name": "SMB Signing Not Required",
+          "port": 445,
+          "port_protocol": "tcp",
+          "severity": "High",
+          "cve": null
+        }
+      ]
+    }
+  },
+  "GET /api/vulnerability-import-findings/:vulnerability_import_finding_id": {
+    "description": "Serves a single imported vulnerability finding identified by its ID.",
+    "exampleResponse": {
+      "vulnerability_import_finding": {
+        "vulnerability_import_finding_id": 1,
+        "vulnerability_import_id": 1,
+        "asset_id": 1,
+        "nvt_oid": "1.3.6.1.4.1.25623.1.0.100001",
+        "nvt_name": "TLS Certificate Expired",
+        "port": 443,
+        "port_protocol": "tcp",
+        "severity": "Critical",
+        "cve": "CVE-2024-TEST01"
       }
     }
   }

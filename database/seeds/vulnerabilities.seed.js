@@ -178,14 +178,20 @@ const createVulnerabilityImports = (vulnerabilityImportsData) => {
 };
 
 
-const createVulnerabilityImportFindings = (vulnerabilityImportFindingsData) => {
+
+const createVulnerabilityImportFindings = (
+    vulnerabilityImportFindingsData
+) => {
     return db.query(`
         CREATE TABLE IF NOT EXISTS vulnerability_import_findings (
             vulnerability_import_finding_id INT AUTO_INCREMENT PRIMARY KEY,
 
             vulnerability_import_id INT NOT NULL,
-            vulnerability_id INT NOT NULL,
             asset_id INT NOT NULL,
+
+            nvt_oid VARCHAR(100) NOT NULL,
+            title VARCHAR(255) NOT NULL,
+            description TEXT,
 
             scanner_severity ENUM(
                 'Info',
@@ -196,6 +202,8 @@ const createVulnerabilityImportFindings = (vulnerabilityImportFindingsData) => {
             ),
 
             cvss DECIMAL(3, 1),
+            port INT NOT NULL DEFAULT 0,
+            port_protocol VARCHAR(10) NOT NULL DEFAULT 'tcp',
             date_detected DATETIME NOT NULL,
 
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -204,13 +212,17 @@ const createVulnerabilityImportFindings = (vulnerabilityImportFindingsData) => {
                 REFERENCES vulnerability_imports(vulnerability_import_id)
                 ON DELETE CASCADE,
 
-            FOREIGN KEY (vulnerability_id)
-                REFERENCES vulnerabilities(vulnerability_id)
-                ON DELETE CASCADE,
-
             FOREIGN KEY (asset_id)
                 REFERENCES assets(asset_id)
-                ON DELETE CASCADE
+                ON DELETE CASCADE,
+
+            UNIQUE KEY unique_import_finding (
+                vulnerability_import_id,
+                asset_id,
+                nvt_oid,
+                port,
+                port_protocol
+            )
         );
     `).then(() => {
         return Promise.all(
@@ -218,18 +230,26 @@ const createVulnerabilityImportFindings = (vulnerabilityImportFindingsData) => {
                 return db.query(
                     `INSERT INTO vulnerability_import_findings (
                         vulnerability_import_id,
-                        vulnerability_id,
                         asset_id,
+                        nvt_oid,
+                        title,
+                        description,
                         scanner_severity,
                         cvss,
+                        port,
+                        port_protocol,
                         date_detected
-                    ) VALUES (?, ?, ?, ?, ?, ?)`,
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                     [
                         finding.vulnerability_import_id,
-                        finding.vulnerability_id,
                         finding.asset_id,
+                        finding.nvt_oid,
+                        finding.title,
+                        finding.description,
                         finding.scanner_severity ?? null,
                         finding.cvss ?? null,
+                        finding.port ?? 0,
+                        finding.port_protocol ?? 'tcp',
                         finding.date_detected
                     ]
                 );
@@ -237,7 +257,6 @@ const createVulnerabilityImportFindings = (vulnerabilityImportFindingsData) => {
         );
     });
 };
-
 
 const createVulnerabilityNotes = (vulnerabilityNotesData) => {
     return db.query(`

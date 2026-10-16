@@ -36,6 +36,13 @@ const {
     getVendorNotesById,
     postVendorNote
 } = require('./vendors.controllers')
+const {
+    getVulnerabilityImports,
+    getVulnerabilityImportById,
+    getVulnerabilityImportFindings,
+    getVulnerabilityImportFindingById,
+    postVulnerabilityImport
+} = require('./vulnerabilityImports.controllers')
 
 module.exports = {
     getEndpoints,
@@ -67,5 +74,10 @@ module.exports = {
     deleteVendor,
     getVendorRisksById,
     getVendorNotesById,
-    postVendorNote
+    postVendorNote,
+    getVulnerabilityImports,
+    getVulnerabilityImportById,
+    getVulnerabilityImportFindings,
+    getVulnerabilityImportFindingById,
+    postVulnerabilityImport
 };
