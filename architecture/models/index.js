@@ -62,8 +62,23 @@ const {
     removeProject,
     fetchProjectNotesById,
     addProjectNote,
-    fetchRelationshipsByProjectId
+    fetchRelationshipsByProjectId,
 } = require('./projects.models');
+const {
+    fetchRelationships,
+    fetchRelationshipById,
+    addRelationship,
+    removeRelationship,
+    fetchRelationshipsByRecord,
+    fetchStatusHistoryByRecord
+} = require('./recordRelationships.models')
+const {
+    fetchStatusHistory
+} = require('./statusHistory.models');
+const {
+    fetchAuditLog,
+    fetchAuditLogById
+} = require('./auditLogs.models');
 
 module.exports = {
     fetchUsers,
@@ -117,5 +132,14 @@ module.exports = {
     removeProject,
     fetchProjectNotesById,
     addProjectNote,
-    fetchRelationshipsByProjectId
+    fetchRelationshipsByProjectId,
+    fetchRelationships,
+    fetchRelationshipById,
+    addRelationship,
+    removeRelationship,
+    fetchRelationshipsByRecord,
+    fetchStatusHistory,
+    fetchStatusHistoryByRecord,
+    fetchAuditLog,
+    fetchAuditLogById
 };

@@ -65,6 +65,21 @@ const {
     postProjectNote,
     getRelationshipsByProjectId
 } = require('./projects.controllers')
+const {
+    getRelationships,
+    getRelationshipById,
+    postRelationship,
+    deleteRelationship,
+    getRelationshipsByRecord,
+    getStatusHistoryByRecord
+} = require('./recordRelationships.controllers')
+const {
+    getStatusHistory
+} = require('./statusHistory.controllers')
+const {
+    getAuditLog,
+    getAuditLogById
+} = require('./auditLogs.controllers');
 
 module.exports = {
     getEndpoints,
@@ -119,5 +134,14 @@ module.exports = {
     deleteProject,
     getProjectNotesById,
     postProjectNote,
-    getRelationshipsByProjectId
+    getRelationshipsByProjectId,
+    getRelationships,
+    getRelationshipById,
+    postRelationship,
+    deleteRelationship,
+    getRelationshipsByRecord,
+    getStatusHistory,
+    getStatusHistoryByRecord,
+    getAuditLog,
+    getAuditLogById
 };
