@@ -1,24 +1,112 @@
 {
   "GET /api": {
-    "description": "Serves a JSON representation of all available API endpoints."
+    "description": "Serves a JSON representation of all available API endpoints. This documentation endpoint is public; application endpoints require an authenticated session except registration, login, and logout. For an existing database, run npm run migrate:auth to create the session table without reseeding data."
+  },
+  "GET /api/reports/:report_type/data": {
+    "description": "Generates JSON report data for a supported report type. Provide period_start and period_end as YYYY-MM-DD query parameters.",
+    "exampleRequest": {
+      "period_start": "2026-09-01",
+      "period_end": "2026-09-30"
+    },
+    "exampleResponse": {
+      "report": {
+        "metadata": {
+          "report_type": "vulnerability_summary",
+          "period_start": "2026-09-01",
+          "period_end": "2026-09-30",
+          "reporting_mode": "current_state_and_period_activity",
+          "generated_at": "2026-10-01T09:00:00.000Z"
+        },
+        "summary": "Vulnerability identification and remediation summary for the reporting period.",
+        "metrics": {
+          "total_open": 0,
+          "severity_breakdown": {
+            "critical": 0,
+            "high": 0,
+            "medium": 0,
+            "low": 0
+          },
+          "identified_during_period": 0,
+          "remediated_during_period": 0
+        },
+        "narrative": "Prioritise remediation of critical and high-severity findings.",
+        "limitations": [
+          "Overdue vulnerabilities cannot be calculated because the vulnerability schema has no due-date field."
+        ]
+      }
+    }
+  },
+  "GET /api/reports/:report_type/pdf": {
+    "description": "Generates a PDF for a supported report type and displays it inline in the browser. Use management_summary to combine metrics from all five report types. Provide period_start and period_end as YYYY-MM-DD query parameters."
+  },
+  "GET /api/dashboard/summary": {
+    "description": "Returns current key metrics across vulnerabilities, vendor risks, projects, threat intelligence and recorded activity. Period metrics default to the last 30 days; optional period_start and period_end query parameters override the range. Threat trends default to the last six calendar months.",
+    "exampleRequest": {
+      "period_start": "2026-09-01",
+      "period_end": "2026-09-30"
+    }
+  },
+  "GET /api/dashboard/threat-intelligence": {
+    "description": "Returns threat article metrics and monthly collection trends grouped by severity. Period metrics default to the last 30 days; threat trends default to the last six calendar months. Optional period_start and period_end query parameters set both ranges."
+  },
+  "GET /api/dashboard/vulnerabilities": {
+    "description": "Returns current open vulnerability counts and severity breakdown, plus identified and remediated counts for the last 30 days by default. Optional period_start and period_end query parameters override the activity period."
+  },
+  "GET /api/dashboard/vendor-risks": {
+    "description": "Returns current vendor risk counts and risk-level breakdown, plus created and closed counts for the last 30 days by default. Optional period_start and period_end query parameters override the activity period."
+  },
+  "GET /api/dashboard/projects": {
+    "description": "Returns current project status counts and recorded project update/status-change activity for the last 30 days by default. Optional period_start and period_end query parameters override the activity period."
+  },
+  "GET /api/dashboard/activity": {
+    "description": "Returns audit and status-change counts for the last 30 days by default, plus the 20 most recent audit actions and 20 most recent status changes. Optional period_start and period_end query parameters set the count period."
+  },
+  "POST /api/auth/register": {
+    "description": "Creates an account using a scrypt password hash and immediately starts an eight-hour HttpOnly session. Registration is public.",
+    "exampleRequest": {
+      "username": "analyst1",
+      "password": "a-long-unique-passphrase"
+    }
+  },
+  "POST /api/auth/login": {
+    "description": "Authenticates credentials and starts an eight-hour HttpOnly session cookie.",
+    "exampleRequest": {
+      "username": "analyst1",
+      "password": "a-long-unique-passphrase"
+    }
+  },
+  "POST /api/auth/logout": {
+    "description": "Revokes the current session and clears its cookie."
+  },
+  "GET /api/auth/me": {
+    "description": "Returns the authenticated user's safe profile fields."
+  },
+  "PATCH /api/auth/password": {
+    "description": "Changes the authenticated user's password after verifying the current password. Revokes all sessions, requiring a new login.",
+    "exampleRequest": {
+      "current_password": "current-long-passphrase",
+      "new_password": "new-long-unique-passphrase"
+    }
   },
   "GET /api/users": {
-    "description": "Serves an array of all users.",
+    "description": "Lists safe user profile fields. Requires authentication; password hashes are never returned.",
     "exampleResponse": {
       "users": [
         {
           "user_id": 1,
-          "username": "user1",
-          "password_hash": "hash1",
-          "created_at": "2026-10-11T19:33:04.000Z"
-        },
-        {
-          "user_id": 2,
-          "username": "user2",
-          "password_hash": "hash2",
+          "username": "analyst1",
           "created_at": "2026-10-11T19:33:04.000Z"
         }
       ]
+    }
+  },
+  "GET /api/users/:id": {
+    "description": "Returns one user's safe profile fields. Requires authentication."
+  },
+  "PATCH /api/users/:id": {
+    "description": "Updates the authenticated user's username. Only the account owner may update their own profile; password changes use PATCH /api/auth/password.",
+    "exampleRequest": {
+      "username": "security_analyst"
     }
   },
   "GET /api/vulnerabilities": {

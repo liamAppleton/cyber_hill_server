@@ -43,6 +43,7 @@ const seed = ({
     threatArticlesData
 }) => {
     return db.query(`SET FOREIGN_KEY_CHECKS = 0`)
+        .then(() => db.query(`DROP TABLE IF EXISTS user_sessions`))
         .then(() => db.query(`DROP TABLE IF EXISTS reports`))
         .then(() => db.query(`DROP TABLE IF EXISTS record_relationships`))
         .then(() => db.query(`DROP TABLE IF EXISTS audit_log`))

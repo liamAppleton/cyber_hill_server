@@ -1,5 +1,7 @@
 const apiRouter = require('express').Router();
 const endpointsRouter = require('./endpoints.router');
+const authRouter = require('./auth.router');
+const { requireAuth } = require('../middleware/require-auth');
 const usersRouter = require('./users.router');
 const vulnerabilitiesRouter = require('./vulnerabilities.router');
 const vulnerabilityAssetsRouter = require('./vulnerabilityAssets.router');
@@ -13,9 +15,13 @@ const recordRelationshipsRouter = require('./recordRelationships.router')
 const recordsRouter = require('./records.router')
 const statusHistoryRouter = require('./statusHistory.router')
 const auditLogRouter = require('./auditLog.router');
+const reportsRouter = require('./reports.router');
+const dashboardRouter = require('./dashboard.router');
 
 apiRouter.use('/', endpointsRouter);
+apiRouter.use('/auth', authRouter);
 
+apiRouter.use(requireAuth);
 apiRouter.use('/users', usersRouter);
 
 apiRouter.use('/vulnerabilities', vulnerabilitiesRouter);
@@ -41,5 +47,9 @@ apiRouter.use('/records', recordsRouter);
 apiRouter.use('/status-history', statusHistoryRouter);
 
 apiRouter.use('/audit-logs', auditLogRouter);
+
+apiRouter.use('/reports', reportsRouter);
+
+apiRouter.use('/dashboard', dashboardRouter);
 
 module.exports = apiRouter;

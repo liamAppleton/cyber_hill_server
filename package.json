@@ -6,6 +6,7 @@
   "scripts": {
     "setup-dbs": "mariadb -u cyber_hill_admin -p cyber_hill < ./database/setup-dbs.sql",
     "seed": "node ./database/runSeed.js",
+    "migrate:auth": "node ./database/migrate-user-sessions.js",
     "server": "nodemon listen.js"
   },
   "keywords": [],
@@ -18,6 +19,7 @@
     "express": "^5.3.0",
     "multer": "^2.4.0",
     "mysql2": "^3.24.5",
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "pdfkit": "^0.20.2"
   }
 }
