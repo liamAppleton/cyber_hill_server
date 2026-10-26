@@ -10,114 +10,68 @@ const {
     fetchRelationshipsByProjectId
 } = require('../models');
 
+const handleError = (err, res, next) => {
+    if (err?.status) return res.status(err.status).send({ error: err.message });
+    if (err?.code === 'ER_DUP_ENTRY') return res.status(409).send({ error: 'A project with that title already exists.' });
+    if (err?.code === 'ER_NO_REFERENCED_ROW_2') return res.status(404).send({ error: 'Project not found.' });
+    return next(err);
+};
+
+const notFound = (res) => res.status(404).send({ error: 'Project not found.' });
+
 const getProjects = (req, res, next) => {
     fetchProjects()
-        .then((projects) => {
-            res.status(200).send({ projects })
-        })
-        .catch((err) => {
-            next(err)
-        })
-}
+        .then((projects) => res.status(200).send({ projects }))
+        .catch(next);
+};
 
 const getProjectById = (req, res, next) => {
-    const { project_id } = req.params;
-
-    fetchProjectById(project_id)
-        .then((project) => {
-            res.status(200).send({ project })
-        })
-        .catch((err) => {
-            next(err)
-        })
-}
+    fetchProjectById(req.params.project_id)
+        .then((project) => (project ? res.status(200).send({ project }) : notFound(res)))
+        .catch(next);
+};
 
 const postProject = (req, res, next) => {
-    const { title, description, status, start_date, target_date } = req.body;
-
-    addProject(title, description, status, start_date, target_date)
-        .then((project) => {
-            res.status(201).send({ project })
-        })
-        .catch((err) => {
-            next(err)
-        })
-}
+    addProject(req.body)
+        .then((project) => res.status(201).send({ project }))
+        .catch((err) => handleError(err, res, next));
+};
 
 const patchProject = (req, res, next) => {
-    const { project_id } = req.params;
-    const updates = req.body;
-
-    updateProject(project_id, updates)
-        .then((project) => [
-            res.status(200).send({ project })
-        ])
-        .catch((err) => {
-            next(err)
-        })
-}
+    updateProject(req.params.project_id, req.body)
+        .then((project) => (project ? res.status(200).send({ project }) : notFound(res)))
+        .catch((err) => handleError(err, res, next));
+};
 
 const patchProjectStatus = (req, res, next) => {
-    const { project_id } = req.params;
-    const { status } = req.body;
-
-    updateProjectStatus(project_id, status)
-        .then(() => {
-            res.status(200).send({ message: "Project status updated" })
-        })
-        .catch((err) => {
-            next(err)
-        })
-}
+    updateProjectStatus(req.params.project_id, req.body?.status)
+        .then((project) => (project ? res.status(200).send({ project }) : notFound(res)))
+        .catch((err) => handleError(err, res, next));
+};
 
 const deleteProject = (req, res, next) => {
-    const { project_id } = req.params;
-
-    removeProject(project_id)
-    .then(() => {
-        res.status(204).send()
-    })
-    .catch((err) => {
-        next(err)
-    })
-}
+    removeProject(req.params.project_id)
+        .then((affected) => (affected ? res.status(204).send() : notFound(res)))
+        .catch(next);
+};
 
 const getProjectNotesById = (req, res, next) => {
-    const { project_id } = req.params;
-
-    fetchProjectNotesById(project_id)
-        .then((project_notes) => {
-            res.status(200).send({ project_notes })
-        }) 
-        .catch((err) => {
-            next(err)
-        })
-}
+    fetchProjectNotesById(req.params.project_id)
+        .then((project_notes) => res.status(200).send({ project_notes }))
+        .catch(next);
+};
 
 const postProjectNote = (req, res, next) => {
-    const { project_id } = req.params;
-    const { body, user_id } = req.body;
-
-    addProjectNote(project_id, body, user_id)
-        .then((project_notes) => {
-            res.status(204).send({ project_notes })
-        })
-        .catch((err) => {
-            next(err)
-        })
-}
+    addProjectNote(req.params.project_id, req.body?.body, req.user.user_id)
+        .then((project_note) => res.status(201).send({ project_note }))
+        .catch((err) => handleError(err, res, next));
+};
 
 const getRelationshipsByProjectId = (req, res, next) => {
-    const { project_id } = req.params;
-
-    fetchRelationshipsByProjectId(project_id)
-        .then((project_relationship_records) => {
-            res.status(200).send({ project_relationship_records})
-        })
-        .catch((err) => {
-            next(err)
-        })
-}
+    fetchRelationshipsByProjectId(req.params.project_id)
+        .then((project_relationship_records) => res.status(200).send({ project_relationship_records }))
+        .catch(next);
+};
 
 module.exports = {
     getProjects,

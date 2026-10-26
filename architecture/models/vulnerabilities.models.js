@@ -1,8 +1,17 @@
 const db = require('../../database/db');
+const { removeRelationshipsForRecord } = require('./recordRelationships.models');
 
 const fetchVulnerabilities = () => {
-    return db.query('SELECT * FROM vulnerabilities')
-        .then(([rows]) => rows)
+    return db.query(`
+        SELECT v.*,
+            COALESCE(v.contextual_severity, v.scanner_severity) AS effective_severity,
+            (SELECT COUNT(*) FROM vulnerability_assets va WHERE va.vulnerability_id = v.vulnerability_id) AS asset_count,
+            (SELECT GROUP_CONCAT(CONCAT(a.asset_name, ' ', COALESCE(a.ip_address, '')) SEPARATOR ' ')
+                FROM vulnerability_assets va JOIN assets a ON a.asset_id = va.asset_id
+                WHERE va.vulnerability_id = v.vulnerability_id) AS asset_search
+        FROM vulnerabilities v
+        ORDER BY v.vulnerability_id DESC
+    `).then(([rows]) => rows)
 };
 
 const fetchVulnerabilityById = (id) => {
@@ -57,9 +66,13 @@ const updateVulnerabilityById = ({ contextual_severity, vulnerability_id }) => {
 const updateVulnerabilityStatusById = ({ status, vulnerability_id }) => {
     return db.query(
         `UPDATE vulnerabilities
-        SET status = ?
+        SET status = ?,
+            resolved_at = CASE
+                WHEN ? = 'Resolved' THEN COALESCE(resolved_at, CURRENT_TIMESTAMP)
+                ELSE NULL
+            END
         WHERE vulnerability_id = ?`,
-        [status, vulnerability_id]
+        [status, status, vulnerability_id]
     )
     .then(() => {
         return db.query(
@@ -73,11 +86,39 @@ const updateVulnerabilityStatusById = ({ status, vulnerability_id }) => {
     })
 }
 
+const fetchNotesByVulnerabilityId = (vulnerability_id) => {
+    return db.query(
+        `SELECT n.*, u.username
+         FROM vulnerability_notes n
+         LEFT JOIN users u ON u.user_id = n.user_id
+         WHERE n.vulnerability_id = ?
+         ORDER BY n.created_at DESC, n.vulnerability_note_id DESC`,
+        [vulnerability_id]
+    ).then(([rows]) => rows);
+};
+
+const addNoteToVulnerability = ({ vulnerability_id, body, user_id }) => {
+    return db.query(
+        `INSERT INTO vulnerability_notes (vulnerability_id, body, user_id)
+         VALUES (?, ?, ?)`,
+        [vulnerability_id, body, user_id]
+    )
+    .then(([result]) => db.query(
+        `SELECT n.*, u.username
+         FROM vulnerability_notes n
+         LEFT JOIN users u ON u.user_id = n.user_id
+         WHERE n.vulnerability_note_id = ?`,
+        [result.insertId]
+    ))
+    .then(([rows]) => rows[0]);
+};
+
 const removeVulnerability = (vulnerability_id) => {
     const queryString = 'DELETE FROM vulnerabilities WHERE vulnerability_id = ?';
 
     return db.query(queryString, [vulnerability_id])
         .then(([result]) => {
+            if (result.affectedRows) return removeRelationshipsForRecord('vulnerability', vulnerability_id).then(() => result.affectedRows);
             return result.affectedRows
         })
 }
@@ -95,7 +136,7 @@ const fetchAssetsByVulnerabilityId = (vulnerability_id) => {
 
 const addAssetsByVulnerabilityId = (vulnerability_id, asset_ids) => {
     const queryString = `
-        INSERT INTO vulnerability_assets
+        INSERT IGNORE INTO vulnerability_assets
             (
                 vulnerability_id,
                 asset_id,
@@ -156,5 +197,7 @@ module.exports = {
     removeVulnerability,
     fetchAssetsByVulnerabilityId,
     addAssetsByVulnerabilityId,
-    fetchRelationshipsByVulnerabilityId
+    fetchRelationshipsByVulnerabilityId,
+    fetchNotesByVulnerabilityId,
+    addNoteToVulnerability
 };

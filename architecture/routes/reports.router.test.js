@@ -3,6 +3,7 @@ const { after, before, test } = require('node:test');
 const express = require('express');
 const reportDataModels = require('../models/reportData.models');
 const reportsRouter = require('./reports.router');
+const db = require('../../database/db');
 
 const app = express();
 app.use('/api/reports', reportsRouter);
@@ -18,7 +19,8 @@ before(() => new Promise((resolve) => {
 }));
 
 after(() => new Promise((resolve, reject) => {
-    server.close((error) => error ? reject(error) : resolve());
+    server.close((error) => error ? reject(error) : db.end().then(resolve, reject));
+    server.closeAllConnections();
 }));
 
 test('report endpoint rejects unsupported types with a 400 response', () => {

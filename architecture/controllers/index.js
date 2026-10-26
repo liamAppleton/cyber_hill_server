@@ -9,7 +9,9 @@ const {
     deleteVulnerability,
     getAssetsByVulnerabilityId,
     postAssetsByVulnerabilityId,
-    getRelationshipsByVulnerabilityId
+    getRelationshipsByVulnerabilityId,
+    getNotesByVulnerabilityId,
+    postNoteToVulnerability
 } = require('./vulnerabilities.controllers');
 const {
     getVulnerabilityAssetById,
@@ -41,7 +43,9 @@ const {
     getVulnerabilityImportById,
     getVulnerabilityImportFindings,
     getVulnerabilityImportFindingById,
-    postVulnerabilityImport
+    postVulnerabilityImport,
+    postPromoteStagedFindings,
+    postDiscardStagedFindings
 } = require('./vulnerabilityImports.controllers')
 const {
     getVendorRisks,
@@ -71,7 +75,9 @@ const {
     postRelationship,
     deleteRelationship,
     getRelationshipsByRecord,
-    getStatusHistoryByRecord
+    getStatusHistoryByRecord,
+    getLinksByRecord,
+    getLinkableRecords
 } = require('./recordRelationships.controllers')
 const {
     getStatusHistory
@@ -93,6 +99,8 @@ module.exports = {
     getAssetsByVulnerabilityId,
     postAssetsByVulnerabilityId,
     getRelationshipsByVulnerabilityId,
+    getNotesByVulnerabilityId,
+    postNoteToVulnerability,
     getVulnerabilityAssetById,
     patchVulnerabilityAssetById,
     deleteVulnerabilityAsset,
@@ -117,6 +125,8 @@ module.exports = {
     getVulnerabilityImportFindings,
     getVulnerabilityImportFindingById,
     postVulnerabilityImport,
+    postPromoteStagedFindings,
+    postDiscardStagedFindings,
     getVendorRisks,
     getVendorRiskById,
     postVendorRisk,
@@ -142,6 +152,8 @@ module.exports = {
     getRelationshipsByRecord,
     getStatusHistory,
     getStatusHistoryByRecord,
+    getLinksByRecord,
+    getLinkableRecords,
     getAuditLog,
     getAuditLogById
 };

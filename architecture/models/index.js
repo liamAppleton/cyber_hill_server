@@ -8,7 +8,9 @@ const {
     removeVulnerability,
     fetchAssetsByVulnerabilityId,
     addAssetsByVulnerabilityId,
-    fetchRelationshipsByVulnerabilityId
+    fetchRelationshipsByVulnerabilityId,
+    fetchNotesByVulnerabilityId,
+    addNoteToVulnerability
 } = require('.//vulnerabilities.models');
 const {
     fetchVulnerabilityAssetById,
@@ -40,7 +42,9 @@ const {
     fetchVulnerabilityImportById,
     fetchVulnerabilityImportFindings,
     fetchVulnerabilityImportFindingById,
-    importVulnerabilityFindings
+    importVulnerabilityFindings,
+    promoteStagedFindings,
+    discardStagedFindings
 } = require('./vulnerabilityImports.models');
 const {
     fetchVendorRisks,
@@ -70,7 +74,12 @@ const {
     addRelationship,
     removeRelationship,
     fetchRelationshipsByRecord,
-    fetchStatusHistoryByRecord
+    fetchStatusHistoryByRecord,
+    LINKABLE_TYPES,
+    RELATIONSHIP_TYPES,
+    fetchLinksByRecord,
+    fetchLinkableRecords,
+    removeRelationshipsForRecord
 } = require('./recordRelationships.models')
 const {
     fetchStatusHistory
@@ -91,6 +100,8 @@ module.exports = {
     fetchAssetsByVulnerabilityId,
     addAssetsByVulnerabilityId,
     fetchRelationshipsByVulnerabilityId,
+    fetchNotesByVulnerabilityId,
+    addNoteToVulnerability,
     fetchVulnerabilityAssetById,
     updateVulnerabilityAssetById,
     removeVulnerabilityAsset,
@@ -115,6 +126,8 @@ module.exports = {
     fetchVulnerabilityImportFindings,
     fetchVulnerabilityImportFindingById,
     importVulnerabilityFindings,
+    promoteStagedFindings,
+    discardStagedFindings,
     fetchVendorRisks,
     fetchVendorRiskById,
     addVendorRisk,
@@ -140,6 +153,11 @@ module.exports = {
     fetchRelationshipsByRecord,
     fetchStatusHistory,
     fetchStatusHistoryByRecord,
+    fetchLinksByRecord,
+    fetchLinkableRecords,
+    removeRelationshipsForRecord,
+    LINKABLE_TYPES,
+    RELATIONSHIP_TYPES,
     fetchAuditLog,
     fetchAuditLogById
 };

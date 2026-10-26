@@ -225,7 +225,10 @@
   "POST /api/vulnerabilities/:vulnerability_id/assets": {
     "description": "Associates one or more assets with a vulnerability.",
     "exampleRequest": {
-      "asset_ids": [2, 4]
+      "asset_ids": [
+        2,
+        4
+      ]
     },
     "exampleResponse": {
       "assets": [
@@ -981,8 +984,8 @@
       ]
     }
   },
-  "GET /api/audit-log": {
-    "description": "Serves audit log entries across the system.",
+  "GET /api/audit-logs": {
+    "description": "Serves audit log entries across the system, newest first. Optional filters: record_type, record_id, action, user_id, from, to (YYYY-MM-DD) and limit.",
     "exampleResponse": {
       "audit_log": [
         {
@@ -997,7 +1000,7 @@
       ]
     }
   },
-  "GET /api/audit-log/:audit_log_id": {
+  "GET /api/audit-logs/:audit_log_id": {
     "description": "Serves a single audit log entry identified by its ID.",
     "exampleResponse": {
       "audit_log": {
@@ -1010,5 +1013,76 @@
         "created_at": "2026-10-16T09:00:00.000Z"
       }
     }
+  },
+  "GET /api/vulnerabilities/:vulnerability_id/notes": {
+    "description": "Lists the timestamped notes recorded directly on a vulnerability, newest first."
+  },
+  "POST /api/vulnerabilities/:vulnerability_id/notes": {
+    "description": "Adds a timestamped note to a vulnerability. The author is the signed-in user.",
+    "exampleRequest": {
+      "body": "Patch scheduled for the next maintenance window."
+    }
+  },
+  "POST /api/vulnerability-imports/:vulnerability_import_id/promote": {
+    "description": "Approves staged import findings, creating vulnerabilities (or attaching assets to existing ones) without duplicating records."
+  },
+  "POST /api/vulnerability-imports/:vulnerability_import_id/discard": {
+    "description": "Discards a staged import so none of its findings are added to the vulnerability list."
+  },
+  "GET /api/records/lookup/:record_type": {
+    "description": "Lists records of one type (vulnerability, vendor, vendor_risk or project) in a compact form, for choosing a link target."
+  },
+  "GET /api/records/:record_type/:relationship_record_id/links": {
+    "description": "Lists the records linked to a record, with the relationship type and direction from that record's point of view."
+  },
+  "POST /api/reports/:report_type/data": {
+    "description": "Same as the GET version, but accepts period_start, period_end, title and narrative in a JSON body."
+  },
+  "POST /api/reports/:report_type/pdf": {
+    "description": "Generates a chart-based PDF report (management_summary, vulnerability_summary, vendor_risk or project_status). Accepts period_start, period_end, title and narrative in a JSON body. The management summary also includes saved SOC, phishing and ticket inputs for the period."
+  },
+  "GET /api/reports/:report_type/docx": {
+    "description": "Generates a Word (.docx) version of the report. Query parameters are period_start and period_end."
+  },
+  "POST /api/reports/:report_type/docx": {
+    "description": "Generates a Word (.docx) report from a JSON body with period_start, period_end, title and narrative."
+  },
+  "GET /api/report-inputs": {
+    "description": "Returns the manually entered report inputs saved for a period: SOC report, phishing campaign results and monthly cyber security ticket statistics. Provide period_start and period_end."
+  },
+  "PUT /api/report-inputs/soc": {
+    "description": "Saves the SOC report text and optional screenshot for a period (multipart form: period_start, period_end, summary, screenshot, remove_screenshot). Screenshots must be PNG, JPEG or WebP up to 5 MB."
+  },
+  "GET /api/report-inputs/soc/screenshot": {
+    "description": "Returns the saved SOC screenshot (PNG) for a period, or 404 if none is saved."
+  },
+  "PUT /api/report-inputs/phishing": {
+    "description": "Replaces the phishing campaign results for a period.",
+    "exampleRequest": {
+      "period_start": "2026-07-01",
+      "period_end": "2026-09-30",
+      "campaigns": [
+        {
+          "team": "Finance",
+          "learners": 42,
+          "open_rate": 55.5,
+          "phish_rate": 12
+        }
+      ]
+    }
+  },
+  "PUT /api/report-inputs/tickets": {
+    "description": "Saves the total tickets opened and per-category ticket counts for one month. Blank category values are removed.",
+    "exampleRequest": {
+      "month": "2026-07",
+      "total_opened": 120,
+      "categories": {
+        "Malware": 3,
+        "Phishing email": 40
+      }
+    }
+  },
+  "GET /api/dashboard/:dashboard_type": {
+    "description": "Dashboard data for a period. dashboard_type is one of summary, vulnerabilities, vendor-risks, projects, activity or threat-intelligence. Provide period_start and period_end."
   }
 }

@@ -6,6 +6,7 @@ const createAssets = (assetsData) => {
             asset_id INT AUTO_INCREMENT PRIMARY KEY,
             asset_name VARCHAR(255) NOT NULL UNIQUE,
             asset_type VARCHAR(100) NOT NULL,
+            ip_address VARCHAR(45) NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ON UPDATE CURRENT_TIMESTAMP
@@ -14,11 +15,12 @@ const createAssets = (assetsData) => {
         return Promise.all(
             assetsData.map(asset => {
                 return db.query(
-                    `INSERT INTO assets (asset_name, asset_type)
-                     VALUES (?, ?)`,
+                    `INSERT INTO assets (asset_name, asset_type, ip_address)
+                     VALUES (?, ?, ?)`,
                     [
                         asset.asset_name,
-                        asset.asset_type
+                        asset.asset_type,
+                        asset.ip_address ?? null
                     ]
                 );
             })

@@ -12,13 +12,13 @@ const fetchAssetById = (asset_id) => {
         .then(([rows]) => rows[0])
 }
 
-const addAsset = ({ asset_name, asset_type }) => {
-    const queryValues = [ asset_name, asset_type ];
+const addAsset = ({ asset_name, asset_type, ip_address }) => {
+    const queryValues = [ asset_name, asset_type, ip_address || null ];
     
     const queryString = 
     `INSERT INTO assets
-    (asset_name, asset_type)
-    VALUES (?, ?)`;
+    (asset_name, asset_type, ip_address)
+    VALUES (?, ?, ?)`;
 
     return db.query(queryString, queryValues)
         .then(([result]) => {
@@ -26,12 +26,29 @@ const addAsset = ({ asset_name, asset_type }) => {
         })
 }
 
-const updateAsset = ({ asset_id, asset_name, asset_type }) => {
+const updateAsset = ({ asset_id, asset_name, asset_type, ip_address }) => {
+    // Only fields present in the request are changed; an empty IP clears it.
+    const fields = [];
+    const values = [];
+
+    if (asset_name !== undefined) {
+        fields.push('asset_name = ?');
+        values.push(asset_name);
+    }
+    if (asset_type !== undefined) {
+        fields.push('asset_type = ?');
+        values.push(asset_type);
+    }
+    if (ip_address !== undefined) {
+        fields.push('ip_address = ?');
+        values.push(ip_address || null);
+    }
+    fields.push('updated_at = CURRENT_TIMESTAMP');
+    values.push(asset_id);
+
     return db.query(
-        `UPDATE assets
-         SET asset_name = ?, asset_type = ?, updated_at = CURRENT_TIMESTAMP
-         WHERE asset_id = ?`,
-        [asset_name, asset_type, asset_id]
+        `UPDATE assets SET ${fields.join(', ')} WHERE asset_id = ?`,
+        values
     )
     .then(() => {
         return db.query(

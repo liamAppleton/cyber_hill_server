@@ -1,4 +1,5 @@
 const db = require('./db.js');
+const createReportInputTables = require('./seeds/reportInputs.seed');
 
 const { createUsers, 
         createAssets,
@@ -44,6 +45,10 @@ const seed = ({
 }) => {
     return db.query(`SET FOREIGN_KEY_CHECKS = 0`)
         .then(() => db.query(`DROP TABLE IF EXISTS user_sessions`))
+        .then(() => db.query(`DROP TABLE IF EXISTS report_soc`))
+        .then(() => db.query(`DROP TABLE IF EXISTS phishing_campaign_results`))
+        .then(() => db.query(`DROP TABLE IF EXISTS ticket_monthly_stats`))
+        .then(() => db.query(`DROP TABLE IF EXISTS ticket_category_counts`))
         .then(() => db.query(`DROP TABLE IF EXISTS reports`))
         .then(() => db.query(`DROP TABLE IF EXISTS record_relationships`))
         .then(() => db.query(`DROP TABLE IF EXISTS audit_log`))
@@ -83,6 +88,7 @@ const seed = ({
         .then(() => createAuditLog(auditLogData))
         .then(() => createRecordRelationships(recordRelationshipsData))
         .then(() => createReports(reportsData))
+        .then(() => createReportInputTables())
 };
 
 module.exports = seed;

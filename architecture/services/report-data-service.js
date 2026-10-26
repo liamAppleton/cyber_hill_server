@@ -76,7 +76,10 @@ const buildVulnerabilityReport = (data, metadata) => {
                         vulnerability.status
                     ].filter(Boolean).join('  /  '),
                     vulnerability.description,
-                    { date_discovered: vulnerability.date_discovered }
+                    {
+                        affected_assets: (vulnerability.assets || []).join(', ') || 'None recorded',
+                        date_discovered: vulnerability.date_discovered
+                    }
                 )
             ))
         },
@@ -120,8 +123,8 @@ const buildVendorRiskReport = (data, metadata) => {
             empty_message: 'No priority supplier risks to list.',
             items: data.priority_risks.map((risk) => (
                 buildRecordDetail(
-                    risk.title,
-                    [risk.vendor_name, formatLabel(risk.risk_level), formatLabel(risk.status)]
+                    risk.vendor_name || 'Unknown vendor',
+                    [risk.title, formatLabel(risk.risk_level), formatLabel(risk.status)]
                         .filter(Boolean)
                         .join('  /  '),
                     risk.description,

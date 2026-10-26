@@ -10,6 +10,40 @@ const dateRangeValues = (periodStart, periodEndExclusive) => (
         : [periodStart]
 );
 
+
+// Open as at the end of the period: raised before it ended and not resolved before it ended.
+const openVulnerabilityAsAt = (periodEndExclusive) => (
+    periodEndExclusive
+        ? `(date_discovered < ? AND ((status IN ('Open', 'In Progress') AND resolved_at IS NULL) OR resolved_at >= ?))`
+        : `status IN ('Open', 'In Progress')`
+);
+
+const openRiskAsAt = (alias, periodEndExclusive) => (
+    periodEndExclusive
+        ? `(${alias}.date_identified < ? AND ((${alias}.status IN ('open', 'in_progress') AND ${alias}.resolved_at IS NULL) OR ${alias}.resolved_at >= ?))`
+        : `${alias}.status IN ('open', 'in_progress')`
+);
+
+const asAtValues = (periodEndExclusive) => (periodEndExclusive ? [periodEndExclusive, periodEndExclusive] : []);
+
+const fetchAssetsFor = async (vulnerabilityIds) => {
+    if (vulnerabilityIds.length === 0) return {};
+    const [rows] = await db.query(`
+        SELECT va.vulnerability_id, a.asset_name, a.ip_address
+        FROM vulnerability_assets va
+        JOIN assets a ON a.asset_id = va.asset_id
+        WHERE va.vulnerability_id IN (?)
+        ORDER BY a.asset_name
+    `, [vulnerabilityIds]);
+    const grouped = {};
+    rows.forEach((row) => {
+        (grouped[row.vulnerability_id] = grouped[row.vulnerability_id] || []).push(
+            row.ip_address ? `${row.asset_name} (${row.ip_address})` : row.asset_name
+        );
+    });
+    return grouped;
+};
+
 const fetchVulnerabilitySummaryData = (periodStart, periodEndExclusive) => {
     const periodValues = dateRangeValues(periodStart, periodEndExclusive);
 
@@ -19,8 +53,8 @@ const fetchVulnerabilitySummaryData = (periodStart, periodEndExclusive) => {
                 vulnerability_id,
                 COALESCE(contextual_severity, scanner_severity) AS severity
             FROM vulnerabilities
-            WHERE status IN ('Open', 'In Progress')
-        `),
+            WHERE ${openVulnerabilityAsAt(periodEndExclusive)}
+        `, asAtValues(periodEndExclusive)),
         db.query(`
             SELECT
                 vulnerability_id,
@@ -31,7 +65,7 @@ const fetchVulnerabilitySummaryData = (periodStart, periodEndExclusive) => {
                 status,
                 date_discovered
             FROM vulnerabilities
-            WHERE status IN ('Open', 'In Progress')
+            WHERE ${openVulnerabilityAsAt(periodEndExclusive)}
                 AND COALESCE(contextual_severity, scanner_severity) IN ('Critical', 'High')
             ORDER BY
                 CASE COALESCE(contextual_severity, scanner_severity)
@@ -41,7 +75,7 @@ const fetchVulnerabilitySummaryData = (periodStart, periodEndExclusive) => {
                 END,
                 date_discovered ASC
             LIMIT 5
-        `),
+        `, asAtValues(periodEndExclusive)),
         db.query(`
             SELECT COUNT(*) AS count
             FROM vulnerabilities
@@ -63,17 +97,23 @@ const fetchVulnerabilitySummaryData = (periodStart, periodEndExclusive) => {
                     AND ${dateRange('changed_at', periodEndExclusive)}
             ) AS remediated_vulnerabilities
         `, [...periodValues, ...periodValues])
-    ]).then(([
+    ]).then(async ([
         [openVulnerabilities],
         [priorityVulnerabilities],
         [identifiedRows],
         [remediatedRows]
-    ]) => ({
+    ]) => {
+        const assetsByVulnerability = await fetchAssetsFor(priorityVulnerabilities.map((row) => row.vulnerability_id));
+        return {
         open_vulnerabilities: openVulnerabilities,
-        priority_vulnerabilities: priorityVulnerabilities,
+        priority_vulnerabilities: priorityVulnerabilities.map((vulnerability) => ({
+            ...vulnerability,
+            assets: assetsByVulnerability[vulnerability.vulnerability_id] || []
+        })),
         identified_during_period: identifiedRows[0].count,
         remediated_during_period: remediatedRows[0].count
-    }));
+        };
+    });
 };
 
 const fetchVendorRiskReportData = (periodStart, periodEndExclusive) => {
@@ -83,9 +123,9 @@ const fetchVendorRiskReportData = (periodStart, periodEndExclusive) => {
         db.query('SELECT COUNT(*) AS count FROM vendors'),
         db.query(`
             SELECT risk_level
-            FROM vendor_risks
-            WHERE status IN ('open', 'in_progress')
-        `),
+            FROM vendor_risks vr
+            WHERE ${openRiskAsAt('vr', periodEndExclusive)}
+        `, asAtValues(periodEndExclusive)),
         db.query(`
             SELECT
                 vr.vendor_risk_id,
@@ -97,7 +137,7 @@ const fetchVendorRiskReportData = (periodStart, periodEndExclusive) => {
                 v.name AS vendor_name
             FROM vendor_risks vr
             JOIN vendors v ON v.vendor_id = vr.vendor_id
-            WHERE vr.status IN ('open', 'in_progress')
+            WHERE ${openRiskAsAt('vr', periodEndExclusive)}
                 AND vr.risk_level IN ('critical', 'high')
             ORDER BY
                 CASE vr.risk_level
@@ -107,11 +147,11 @@ const fetchVendorRiskReportData = (periodStart, periodEndExclusive) => {
                 END,
                 vr.date_identified ASC
             LIMIT 5
-        `),
+        `, asAtValues(periodEndExclusive)),
         db.query(`
             SELECT COUNT(*) AS count
             FROM vendor_risks
-            WHERE ${dateRange('created_at', periodEndExclusive)}
+            WHERE ${dateRange('date_identified', periodEndExclusive)}
         `, periodValues),
         db.query(`
             SELECT COUNT(*) AS count

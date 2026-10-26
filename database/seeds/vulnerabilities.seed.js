@@ -17,7 +17,9 @@ const createVulnerabilities = (vulnerabilitiesData) => {
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 ON UPDATE CURRENT_TIMESTAMP,
-            resolved_at DATETIME
+            resolved_at DATETIME,
+            nvt_oid VARCHAR(100) NULL,
+            INDEX idx_vulnerabilities_nvt_oid (nvt_oid)
         );
     `).then(() => {
         return Promise.all(
@@ -205,6 +207,7 @@ const createVulnerabilityImportFindings = (
             port INT NOT NULL DEFAULT 0,
             port_protocol VARCHAR(10) NOT NULL DEFAULT 'tcp',
             date_detected DATETIME NOT NULL,
+            vulnerability_id INT NULL,
 
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 

@@ -30,9 +30,9 @@ const getAssetById = (req, res, next) => {
 };
 
 const postAsset = (req, res, next) => {
-    const { asset_name, asset_type } = req.body;
+    const { asset_name, asset_type, ip_address } = req.body;
 
-    addAsset({asset_name, asset_type})
+    addAsset({asset_name, asset_type, ip_address})
         .then((asset) => {
             res.status(201).send({ asset })
         })
@@ -43,9 +43,9 @@ const postAsset = (req, res, next) => {
 
 const patchAsset = (req, res, next) => {
     const { asset_id } = req.params;
-    const { asset_name, asset_type } = req.body;
+    const { asset_name, asset_type, ip_address } = req.body;
 
-    updateAsset({ asset_id, asset_name, asset_type })
+    updateAsset({ asset_id, asset_name, asset_type, ip_address })
         .then((asset) => {
             res.status(200).send({ asset })
         })

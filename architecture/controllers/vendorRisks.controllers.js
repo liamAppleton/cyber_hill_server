@@ -10,6 +10,12 @@ const {
     fetchRelationshipsByVendorRiskId
 } = require('../models');
 
+const handleError = (err, res, next) => {
+    if (err?.status) return res.status(err.status).send({ error: err.message });
+    if (err?.code === 'ER_NO_REFERENCED_ROW_2') return res.status(404).send({ error: 'Referenced record not found.' });
+    return next(err);
+};
+
 const getVendorRisks = (req, res, next) => {
     fetchVendorRisks()
         .then((vendor_risks) => {
@@ -25,11 +31,10 @@ const getVendorRiskById = (req, res, next) => {
 
     fetchVendorRiskById(vendor_risk_id)
         .then((vendor_risk) => {
+            if (!vendor_risk) return res.status(404).send({ error: 'Vendor risk not found.' });
             res.status(200).send({ vendor_risk })
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch(next)
 }
 
 const postVendorRisk = (req, res, next) => {
@@ -39,9 +44,7 @@ const postVendorRisk = (req, res, next) => {
         .then((vendor_risk) => {
             res.status(201).send({ vendor_risk})
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch((err) => handleError(err, res, next))
 }
 
 const patchVendorRisk = (req, res, next) => {
@@ -52,9 +55,7 @@ const patchVendorRisk = (req, res, next) => {
         .then((vendor_risk) => {
             res.status(200).send({ vendor_risk })
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch((err) => handleError(err, res, next))
 }
 
 const patchVendorRiskStatus = (req, res, next) => {
@@ -65,21 +66,18 @@ const patchVendorRiskStatus = (req, res, next) => {
         .then((vendor_risk) => {
             res.status(200).send({ vendor_risk })
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch((err) => handleError(err, res, next))
 }
 
 const deleteVendorRisk = (req, res, next) => {
     const { vendor_risk_id } = req.params;
 
     removeVendorRisk(vendor_risk_id)
-        .then(() => {
+        .then((affected) => {
+            if (!affected) return res.status(404).send({ error: 'Vendor risk not found.' });
             res.status(204).send()
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch(next)
 }
 
 const getVendorRiskNotesById = (req, res, next) => {
@@ -96,15 +94,15 @@ const getVendorRiskNotesById = (req, res, next) => {
 
 const postVendorRiskNote = (req, res, next) => {
     const { vendor_risk_id } = req.params;
-    const { body, user_id } = req.body;
+    const body = typeof req.body?.body === 'string' ? req.body.body.trim() : '';
 
-    addVendorRiskNote(vendor_risk_id, body, user_id)
+    if (!body) return res.status(400).send({ error: 'Note body is required.' });
+
+    addVendorRiskNote(vendor_risk_id, body, req.user.user_id)
         .then((vendor_risk_note) => {
             res.status(201).send({ vendor_risk_note})
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch((err) => handleError(err, res, next))
 }
 
 const getRelationshipsByVendorRiskId = (req, res, next) => {

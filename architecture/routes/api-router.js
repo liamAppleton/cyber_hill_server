@@ -2,6 +2,7 @@ const apiRouter = require('express').Router();
 const endpointsRouter = require('./endpoints.router');
 const authRouter = require('./auth.router');
 const { requireAuth } = require('../middleware/require-auth');
+const { recordActivity } = require('../middleware/record-activity');
 const usersRouter = require('./users.router');
 const vulnerabilitiesRouter = require('./vulnerabilities.router');
 const vulnerabilityAssetsRouter = require('./vulnerabilityAssets.router');
@@ -16,12 +17,14 @@ const recordsRouter = require('./records.router')
 const statusHistoryRouter = require('./statusHistory.router')
 const auditLogRouter = require('./auditLog.router');
 const reportsRouter = require('./reports.router');
+const reportInputsRouter = require('./reportInputs.router');
 const dashboardRouter = require('./dashboard.router');
 
 apiRouter.use('/', endpointsRouter);
 apiRouter.use('/auth', authRouter);
 
 apiRouter.use(requireAuth);
+apiRouter.use(recordActivity);
 apiRouter.use('/users', usersRouter);
 
 apiRouter.use('/vulnerabilities', vulnerabilitiesRouter);
@@ -49,6 +52,8 @@ apiRouter.use('/status-history', statusHistoryRouter);
 apiRouter.use('/audit-logs', auditLogRouter);
 
 apiRouter.use('/reports', reportsRouter);
+
+apiRouter.use('/report-inputs', reportInputsRouter);
 
 apiRouter.use('/dashboard', dashboardRouter);
 

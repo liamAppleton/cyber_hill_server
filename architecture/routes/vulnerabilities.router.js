@@ -7,7 +7,9 @@ const {
     deleteVulnerability,
     getAssetsByVulnerabilityId,
     postAssetsByVulnerabilityId,
-    getRelationshipsByVulnerabilityId
+    getRelationshipsByVulnerabilityId,
+    getNotesByVulnerabilityId,
+    postNoteToVulnerability
 } = require('../controllers');
 
 const vulnerabilitiesRouter = require('express').Router();
@@ -30,6 +32,10 @@ vulnerabilitiesRouter.route('/:vulnerability_id/assets')
 
 vulnerabilitiesRouter.route('/:vulnerability_id/relationships')
     .get(getRelationshipsByVulnerabilityId)
-   
+
+vulnerabilitiesRouter.route('/:vulnerability_id/notes')
+    .get(getNotesByVulnerabilityId)
+    .post(postNoteToVulnerability)
+
 
 module.exports = vulnerabilitiesRouter;

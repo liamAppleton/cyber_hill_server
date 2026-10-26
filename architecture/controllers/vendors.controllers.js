@@ -9,6 +9,15 @@ const {
     addVendorNote
 } = require('../models');
 
+// Sends validation/not-found errors as JSON and maps duplicate vendor names to 409.
+const handleError = (err, res, next) => {
+    if (err?.code === 'ER_DUP_ENTRY') {
+        return res.status(409).send({ error: 'A vendor with that name already exists.' });
+    }
+    if (err?.status) return res.status(err.status).send({ error: err.message });
+    return next(err);
+};
+
 const getVendors = (req, res, next) => {
     fetchVendors()
         .then((vendors) => {
@@ -24,11 +33,10 @@ const getVendorById = (req, res, next) => {
 
     fetchVendorById(vendor_id)
         .then((vendor) => {
+            if (!vendor) return res.status(404).send({ error: 'Vendor not found.' });
             res.status(200).send({ vendor })
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch(next)
 }
 
 const postVendor = (req, res, next) => {
@@ -38,9 +46,7 @@ const postVendor = (req, res, next) => {
         .then((vendor) => {
             res.status(201).send({ vendor })
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch((err) => handleError(err, res, next))
 }
 
 const patchVendor = (req, res, next) => {
@@ -51,21 +57,18 @@ const patchVendor = (req, res, next) => {
         .then((vendor) => {
             res.status(200).send({ vendor })
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch((err) => handleError(err, res, next))
 }
 
 const deleteVendor = (req, res, next) => {
     const { vendor_id } = req.params;
 
     removeVendor(vendor_id)
-        .then(() => {
+        .then((affected) => {
+            if (!affected) return res.status(404).send({ error: 'Vendor not found.' });
             res.status(204).send()
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch(next)
 }
 
 const getVendorRisksById = (req, res, next) => {
@@ -94,15 +97,15 @@ const getVendorNotesById = (req, res, next) => {
 
 const postVendorNote = (req, res, next) => {
     const { vendor_id } = req.params;
-    const { body, user_id } = req.body;
+    const body = typeof req.body?.body === 'string' ? req.body.body.trim() : '';
 
-    addVendorNote({ vendor_id, body, user_id })
-        .then((vendor_notes) => {
-            res.status(201).send({ vendor_notes })
+    if (!body) return res.status(400).send({ error: 'Note body is required.' });
+
+    addVendorNote({ vendor_id, body, user_id: req.user.user_id })
+        .then((vendor_note) => {
+            res.status(201).send({ vendor_note })
         })
-        .catch((err) => {
-            next(err)
-        })
+        .catch(next)
 }
 
 module.exports = {

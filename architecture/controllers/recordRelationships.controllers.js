@@ -1,159 +1,99 @@
 const {
+    LINKABLE_TYPES,
     fetchRelationships,
     fetchRelationshipById,
     addRelationship,
     removeRelationship,
     fetchRelationshipsByRecord,
+    fetchLinksByRecord,
+    fetchLinkableRecords,
     fetchStatusHistoryByRecord
 } = require('../models');
 
+const handleError = (err, res, next) => {
+    if (err?.status) return res.status(err.status).send({ error: err.message });
+    return next(err);
+};
+
+const parseRecordParams = (req, res, allowedTypes) => {
+    const { record_type, relationship_record_id } = req.params;
+
+    if (!allowedTypes.includes(record_type)) {
+        res.status(400).send({ error: `Record type must be one of: ${allowedTypes.join(', ')}.` });
+        return null;
+    }
+    if (!/^\d+$/.test(relationship_record_id) || Number(relationship_record_id) < 1) {
+        res.status(400).send({ error: 'Invalid record ID.' });
+        return null;
+    }
+    return { type: record_type, id: Number(relationship_record_id) };
+};
+
 const getRelationships = (req, res, next) => {
     fetchRelationships()
-        .then((relationships) => {
-            res.status(200).send({ relationships })
-        })
-        .catch((err) => {
-            next(err)
-        })
-}
+        .then((relationships) => res.status(200).send({ relationships }))
+        .catch(next);
+};
 
 const getRelationshipById = (req, res, next) => {
-    const { record_relationship_id } = req.params;
-
-    fetchRelationshipById(record_relationship_id)
-        .then((relationship) => {
-            res.status(200).send({ relationship })
-        })
-        .catch((err) => {
-            next(err)
-        })
-}
+    fetchRelationshipById(req.params.record_relationship_id)
+        .then((relationship) => (relationship
+            ? res.status(200).send({ relationship })
+            : res.status(404).send({ error: 'Relationship not found.' })))
+        .catch(next);
+};
 
 const postRelationship = (req, res, next) => {
-  const {
-    source_record_type,
-    source_record_id,
-    target_record_type,
-    target_record_id,
-    relationship_type,
-    created_by
-  } = req.body || {};
-
-  if (
-    !source_record_type ||
-    !source_record_id ||
-    !target_record_type ||
-    !target_record_id ||
-    !relationship_type ||
-    !created_by
-  ) {
-    return res.status(400).send({
-      msg: "Missing required relationship fields"
-    });
-  }
-
-  if (
-    source_record_type === target_record_type &&
-    Number(source_record_id) === Number(target_record_id)
-  ) {
-    return res.status(400).send({
-      msg: "A record cannot have a relationship with itself"
-    });
-  }
-
-  addRelationship({
-    source_record_type,
-    source_record_id,
-    target_record_type,
-    target_record_id,
-    relationship_type,
-    created_by
-  })
-    .then((relationship) => {
-      res.status(201).send({ relationship });
-    })
-    .catch(next);
+    addRelationship({ ...req.body, created_by: req.user.user_id })
+        .then((relationship) => res.status(201).send({ relationship }))
+        .catch((err) => handleError(err, res, next));
 };
 
 const deleteRelationship = (req, res, next) => {
-    const { record_relationship_id } = req.params;
-
-    removeRelationship(record_relationship_id)
-        .then(() => {
-            res.status(204).send()
-        })
-        .catch((err) => {
-            next(err)
-        })
-}
+    removeRelationship(req.params.record_relationship_id)
+        .then((affected) => (affected
+            ? res.status(204).send()
+            : res.status(404).send({ error: 'Relationship not found.' })))
+        .catch(next);
+};
 
 const getRelationshipsByRecord = (req, res, next) => {
-  const { record_type, relationship_record_id } = req.params;
+    const record = parseRecordParams(req, res, [...LINKABLE_TYPES, 'asset', 'threat_article']);
+    if (!record) return;
 
-  const allowedTypes = [
-    "vulnerability",
-    "asset",
-    "vendor",
-    "project",
-    "threat_article"
-  ];
+    fetchRelationshipsByRecord(record.type, record.id)
+        .then((relationships) => res.status(200).send({ relationships }))
+        .catch(next);
+};
 
-  if (!allowedTypes.includes(record_type)) {
-    return res.status(400).send({
-      msg: "Invalid record type",
-      allowed_values: allowedTypes
-    });
-  }
+const getLinksByRecord = (req, res, next) => {
+    const record = parseRecordParams(req, res, LINKABLE_TYPES);
+    if (!record) return;
 
-  if (!relationship_record_id || !/^\d+$/.test(relationship_record_id) || Number(relationship_record_id) < 1) {
-    return res.status(400).send({
-      msg: "Invalid record ID"
-    });
-  }
+    fetchLinksByRecord(record.type, record.id)
+        .then((links) => res.status(200).send({ links }))
+        .catch(next);
+};
 
-  fetchRelationshipsByRecord(record_type, Number(relationship_record_id))
-    .then((relationships) => {
-      res.status(200).send({ relationships });
-    })
-    .catch(next);
+const getLinkableRecords = (req, res, next) => {
+    fetchLinkableRecords(req.params.record_type)
+        .then((records) => res.status(200).send({ records }))
+        .catch((err) => handleError(err, res, next));
 };
 
 const getStatusHistoryByRecord = (req, res, next) => {
-  const { record_type, relationship_record_id } = req.params;
+    const record = parseRecordParams(req, res, [
+        'vulnerability',
+        'vulnerability_asset',
+        'vendor_risk',
+        'project',
+        'threat_article'
+    ]);
+    if (!record) return;
 
-  const allowedTypes = [
-    "vulnerability",
-    "vulnerability_asset",
-    "vendor_risk",
-    "project",
-    "threat_article"
-  ];
-
-  if (!allowedTypes.includes(record_type)) {
-    return res.status(400).send({
-      msg: "Invalid record type",
-      allowed_values: allowedTypes
-    });
-  }
-
-  if (
-    !relationship_record_id ||
-    !/^\d+$/.test(relationship_record_id) ||
-    Number(relationship_record_id) < 1
-  ) {
-    return res.status(400).send({
-      msg: "Invalid relationship record ID"
-    });
-  }
-
-  fetchStatusHistoryByRecord(
-    record_type,
-    Number(relationship_record_id)
-  )
-    .then((status_history) => {
-      res.status(200).send({ status_history });
-    })
-    .catch(next);
+    fetchStatusHistoryByRecord(record.type, record.id)
+        .then((status_history) => res.status(200).send({ status_history }))
+        .catch(next);
 };
 
 module.exports = {
@@ -162,5 +102,7 @@ module.exports = {
     postRelationship,
     deleteRelationship,
     getRelationshipsByRecord,
+    getLinksByRecord,
+    getLinkableRecords,
     getStatusHistoryByRecord
 };

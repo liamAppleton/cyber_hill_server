@@ -7,7 +7,9 @@ const {
     removeVulnerability,
     fetchAssetsByVulnerabilityId,
     addAssetsByVulnerabilityId,
-    fetchRelationshipsByVulnerabilityId
+    fetchRelationshipsByVulnerabilityId,
+    fetchNotesByVulnerabilityId,
+    addNoteToVulnerability
 } = require('../models');
 
 const getVulnerabilities = (req, res, next) => {
@@ -74,7 +76,7 @@ const patchVulnerabilityStatusById = (req, res, next) => {
     updateVulnerabilityStatusById({ status, vulnerability_id })
         .then((vulnerability) => {
             res.status(200).send({ vulnerability });
-   f     })
+        })
         .catch((err) => {
             next(err);
         });
@@ -108,6 +110,14 @@ const postAssetsByVulnerabilityId = (req, res, next) => {
     const { vulnerability_id } = req.params;
     const { asset_ids } = req.body;
 
+    if (
+        !Array.isArray(asset_ids)
+        || asset_ids.length === 0
+        || !asset_ids.every((id) => Number.isInteger(id) && id > 0)
+    ) {
+        return res.status(400).send({ error: 'asset_ids must be a non-empty array of asset IDs.' });
+    }
+
     addAssetsByVulnerabilityId(vulnerability_id, asset_ids)
         .then(() => {
             return fetchAssetsByVulnerabilityId(vulnerability_id);
@@ -131,7 +141,30 @@ const getRelationshipsByVulnerabilityId = (req, res, next) => {
             next(err);
         });
 };
+const getNotesByVulnerabilityId = (req, res, next) => {
+    const { vulnerability_id } = req.params;
 
+    fetchNotesByVulnerabilityId(vulnerability_id)
+        .then((notes) => {
+            res.status(200).send({ notes });
+        })
+        .catch(next);
+};
+
+const postNoteToVulnerability = (req, res, next) => {
+    const { vulnerability_id } = req.params;
+    const body = typeof req.body?.body === 'string' ? req.body.body.trim() : '';
+
+    if (!body) {
+        return res.status(400).send({ error: 'Note body is required.' });
+    }
+
+    addNoteToVulnerability({ vulnerability_id, body, user_id: req.user.user_id })
+        .then((note) => {
+            res.status(201).send({ note });
+        })
+        .catch(next);
+};
 
 module.exports = {
     getVulnerabilities,
@@ -142,5 +175,7 @@ module.exports = {
     deleteVulnerability,
     getAssetsByVulnerabilityId,
     postAssetsByVulnerabilityId,
-    getRelationshipsByVulnerabilityId
+    getRelationshipsByVulnerabilityId,
+    getNotesByVulnerabilityId,
+    postNoteToVulnerability
 };
