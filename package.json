@@ -6,10 +6,11 @@
   "scripts": {
     "setup-dbs": "mariadb -u cyber_hill_admin -p cyber_hill < ./database/setup-dbs.sql",
     "seed": "node ./database/runSeed.js",
+    "drop-tables": "node ./database/dropTables.js",
     "migrate:auth": "node ./database/migrate-user-sessions.js",
     "migrate:asset-ip-notes": "node ./database/migrate-asset-ip-vulnerability-notes.js",
     "migrate:report-inputs": "node ./database/migrate-report-inputs.js",
-    "server": "nodemon listen.js"
+    "server": "node listen.js"
   },
   "keywords": [],
   "author": "",
@@ -17,12 +18,11 @@
   "type": "commonjs",
   "dependencies": {
     "csv-parse": "^7.0.3",
-    "docx": "^9.14.0",
-    "dotenv": "^18.0.7",
+    "docx": "^9.15.0",
+    "dotenv": "^18.0.9",
     "express": "^5.3.0",
     "multer": "^2.4.0",
-    "mysql2": "^3.24.5",
-    "nodemon": "^3.1.14",
+    "mysql2": "^3.24.6",
     "pdfkit": "^0.20.2",
     "sharp": "^0.35.5"
   }
