@@ -144,9 +144,12 @@ const logResourceActivity = async ({ req, resource, id, sub, before, responseBod
     if (sub === 'status') {
         const after = await loadRow(resource, id);
         if (!before || !after) return;
+        const changes = changedFields(before, after);
         if (before.status !== after.status) {
             await writeStatus(type, id, before.status, after.status, userId, reason);
-            await writeAudit(type, id, 'status_changed', userId, `status: ${before.status} -> ${after.status}`);
+            await writeAudit(type, id, 'status_changed', userId, changes.join('; '));
+        } else if (changes.length) {
+            await writeAudit(type, id, 'record_updated', userId, changes.join('; '));
         }
     }
 };

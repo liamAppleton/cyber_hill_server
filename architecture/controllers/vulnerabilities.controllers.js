@@ -45,8 +45,6 @@ const postVulnerability = (req, res, next) => {
         date_discovered,
         status,
     } = req.body;
-    resolved_at = null;
-
     addVulnerability({ title,description, cve, cvss, contextual_severity, source, date_discovered, status })
         .then((vulnerability) => {
             res.status(201).send({ vulnerability });
@@ -57,12 +55,12 @@ const postVulnerability = (req, res, next) => {
 }
 
 const patchVulnerabilityById = (req, res, next) => {
-    const { contextual_severity } = req.body;
     const { vulnerability_id } = req.params;
 
-    updateVulnerabilityById({ contextual_severity, vulnerability_id })
+    updateVulnerabilityById({ ...req.body, vulnerability_id })
         .then((vulnerability) => {
-            res.status(200).send({ vulnerability })
+            if (!vulnerability) return res.status(404).send({ error: 'Vulnerability not found.' });
+            res.status(200).send({ vulnerability });
         })
         .catch((err) => {
             next(err);
@@ -70,11 +68,12 @@ const patchVulnerabilityById = (req, res, next) => {
 }
 
 const patchVulnerabilityStatusById = (req, res, next) => {
-    const { status } = req.body;
+    const { status, resolved_at } = req.body;
     const { vulnerability_id } = req.params;
 
-    updateVulnerabilityStatusById({ status, vulnerability_id })
+    updateVulnerabilityStatusById({ status, resolved_at, vulnerability_id })
         .then((vulnerability) => {
+            if (!vulnerability) return res.status(404).send({ error: 'Vulnerability not found.' });
             res.status(200).send({ vulnerability });
         })
         .catch((err) => {

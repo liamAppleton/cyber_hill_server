@@ -164,21 +164,24 @@
     }
   },
   "PATCH /api/vulnerabilities/:vulnerability_id": {
-    "description": "Updates an existing vulnerability by its ID.",
+    "description": "Updates an existing vulnerability's title or contextual severity by its ID.",
     "exampleRequest": {
+      "title": "Updated vulnerability title",
       "contextual_severity": "Critical"
     },
     "exampleResponse": {
       "vulnerability": {
         "vulnerability_id": 1,
+        "title": "Updated vulnerability title",
         "contextual_severity": "Critical"
       }
     }
   },
   "PATCH /api/vulnerabilities/:vulnerability_id/status": {
-    "description": "Updates the status of an existing vulnerability by its ID.",
+    "description": "Updates the status of an existing vulnerability by its ID. Provide resolved_at in YYYY-MM-DD format when resolving or changing the resolution date.",
     "exampleRequest": {
-      "status": "Resolved"
+      "status": "Resolved",
+      "resolved_at": "2026-10-13"
     },
     "exampleResponse": {
       "vulnerability": {
@@ -188,7 +191,8 @@
         "cve": "CVE-2026-0001",
         "cvss": 7.5,
         "contextual_severity": "High",
-        "status": "Resolved"
+        "status": "Resolved",
+        "resolved_at": "2026-10-13T00:00:00.000Z"
       }
     }
   },
